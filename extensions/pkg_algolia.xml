@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="package" version="3.8" method="upgrade">
+	<name>PKG_ALGOLIA</name>
+	<creationDate>March 2018</creationDate>
+	<author>Roberto Segura</author>
+	<authorEmail>roberto@phproberto.com</authorEmail>
+	<authorUrl>www.phproberto.com</authorUrl>
+	<copyright>Copyright (C) 2018 Roberto Segura López. All rights reserved.</copyright>
+	<license>GNU General Public License version 2 or later, see LICENSE.</license>
+	<packager>Roberto Segura</packager>
+	<packagename>algolia</packagename>
+	<packagerurl>http://www.phproberto.com</packagerurl>
+	<version>1.0.0</version>
+	<description>PKG_ALGOLIA_XML_DESCRIPTION</description>
+	<scriptfile>install.php</scriptfile>
+
+	<languages folder="language">
+		<language tag="en-GB">en-GB/en-GB.pkg_algolia.sys.ini</language>
+	</languages>
+
+	<files>
+		<file type="component" id="com_algolia" >components/algolia</file>
+		<file type="library" id="algolia">libraries/algolia</file>
+		<file type="plugin" id="content_articles" group="algolia_indexer" enabled="true">plugins/algolia_indexer/content_articles</file>
+		<file type="plugin" id="algolia_indexer" group="content" enabled="true">plugins/content/algolia_indexer</file>
+	</files>
+</extension>

@@ -1,0 +1,18 @@
+# Build
+gulp-config.json
+node_modules/
+/build/releases
+.scannerwork
+
+# Composer
+/vendor/
+composer.lock
+/extensions/dependencies/install_*
+
+# Backups
+*.bak
+
+# Tests
+/clover.xml
+coverage/
+phpunit.xml

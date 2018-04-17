@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="component" version="2.5" method="upgrade">
+	<name>COM_ALGOLIA</name>
+	<creationDate>April 2018</creationDate>
+	<author>phproberto</author>
+	<authorEmail>roberto@phproberto.com</authorEmail>
+	<authorUrl>www.phproberto.com</authorUrl>
+	<copyright>Copyright (C) 2018 Roberto Segura López. All rights reserved.</copyright>
+	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
+	<version>0.0.1</version>
+	<description>COM_ALGOLIA_XML_DESCRIPTION</description>
+
+	<install folder="admin">
+		<sql>
+			<file driver="mysql" charset="utf8">sql/install/mysql/install.sql</file>
+			<file driver="mysql" charset="utf8">sql/install/mysql/data.sql</file>
+		</sql>
+	</install>
+	<uninstall folder="admin">
+		<sql>
+			<file driver="mysql" charset="utf8">sql/install/mysql/uninstall.sql</file>
+		</sql>
+	</uninstall>
+	<update folder="admin">
+		<schemas>
+			<schemapath type="mysql">sql/updates/mysql</schemapath>
+		</schemas>
+		<scripts>
+			<folder>updates</folder>
+		</scripts>
+	</update>
+
+	<files folder="site">
+		<folder>views</folder>
+		<filename>controller.php</filename>
+		<filename>algolia.php</filename>
+	</files>
+
+	<administration>
+		<menu img="class:banners">com_algolia</menu>
+		<files folder="admin">
+			<folder>controllers</folder>
+			<folder>helpers</folder>
+			<folder>language</folder>
+			<folder>models</folder>
+			<folder>sql</folder>
+			<folder>tables</folder>
+			<folder>views</folder>
+			<filename>access.xml</filename>
+			<filename>config.xml</filename>
+			<filename>controller.php</filename>
+			<filename>algolia.php</filename>
+		</files>
+	</administration>
+</extension>

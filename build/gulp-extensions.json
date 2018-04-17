@@ -1,0 +1,9 @@
+{
+	"components": ["algolia"],
+	"libraries"  : ["algolia"],
+	"packages"   : ["algolia"],
+	"plugins" : {
+		"algolia_indexer" : ["content_articles"],
+		"content" : ["algolia_indexer"]
+	}
+}

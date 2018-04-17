@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="3.8" client="site" type="plugin" group="algolia_indexer" method="upgrade">
+	<name>PLG_ALGOLIA_INDEXER_CONTENT_ARTICLES</name>
+	<version>1.0.0</version>
+	<creationDate>March 2018</creationDate>
+	<author>Roberto Segura</author>
+	<authorEmail>roberto@phproberto.com</authorEmail>
+	<authorUrl>www.phproberto.com</authorUrl>
+	<copyright>Copyright (C) 2018 Roberto Segura López. All rights reserved.</copyright>
+	<license>GNU General Public License version 2 or later, see LICENSE.</license>
+	<description>PLG_ALGOLIA_INDEXER_CONTENT_ARTICLES_DESC</description>
+	<files>
+		<folder>forms</folder>
+		<folder>language</folder>
+		<filename plugin="content_articles">content_articles.php</filename>
+		<filename>content_articles.xml</filename>
+	</files>
+	<config>
+		<fields name="params">
+			<fieldset name="basic">
+			</fieldset>
+		</fields>
+	</config>
+</extension>

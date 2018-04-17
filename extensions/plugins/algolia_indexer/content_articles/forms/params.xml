@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fields name="params">
+		<field
+			name="category_mode"
+			type="list"
+			default="2"
+			label="PLG_ALGOLIA_INDEXER_CONTENT_ARTICLES_PARAM_CATEGORY_MODE"
+			required="true"
+			class="input-xxlarge"
+			description="PLG_ALGOLIA_INDEXER_CONTENT_ARTICLES_PARAM_CATEGORY_MODE_DESC"
+		>
+			<option value="1">PLG_ALGOLIA_INDEXER_CONTENT_ARTICLES_PARAM_CATEGORY_MODE_OPTION_INCLUDE</option>
+			<option value="2">PLG_ALGOLIA_INDEXER_CONTENT_ARTICLES_PARAM_CATEGORY_MODE_OPTION_INCLUDE_DESCENDANTS</option>
+			<option value="3">PLG_ALGOLIA_INDEXER_CONTENT_ARTICLES_PARAM_CATEGORY_MODE_OPTION_EXCLUDE</option>
+			<option value="4">PLG_ALGOLIA_INDEXER_CONTENT_ARTICLES_PARAM_CATEGORY_MODE_OPTION_EXCLUDE_DESCENDANTS</option>
+		</field>
+		<field
+			name="categories"
+			type="category"
+			extension="com_content"
+			multiple="true"
+			class="input-xxlarge"
+			label="PLG_ALGOLIA_INDEXER_CONTENT_ARTICLES_PARAM_CATEGORIES"
+			description="PLG_ALGOLIA_INDEXER_CONTENT_ARTICLES_PARAM_CATEGORIES_DESC"
+		>
+		</field>
+		<field
+			name="fields"
+			type="algolia.field"
+			extension="com_content.article"
+			multiple="true"
+			class="input-xxlarge"
+			label="PLG_ALGOLIA_INDEXER_CONTENT_ARTICLES_PARAM_FIELDS"
+			description="PLG_ALGOLIA_INDEXER_CONTENT_ARTICLES_PARAM_FIELDS_DESC"
+		>
+		</field>
+	</fields>
+</form>

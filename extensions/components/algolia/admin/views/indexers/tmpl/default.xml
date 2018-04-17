@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="COM_ALGOLIA_INDEXERS_VIEW_TITLE">
+		<message><![CDATA[COM_ALGOLIA_INDEXERS_VIEW_DESC]]></message>
+	</layout>
+	<fields name="params" addfieldpath="/libraries/algolia/form/field">
+		<fieldset name="basic">
+		</fieldset>
+	</fields>
+</metadata>

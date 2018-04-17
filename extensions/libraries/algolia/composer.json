@@ -1,0 +1,24 @@
+{
+    "name": "phproberto/joomla-algolia",
+    "type": "library",
+    "description": "Algolia integration for joomla",
+    "keywords": ["joomla", "algolia"],
+    "homepage": "https://github.com/phproberto/joomla-algolia",
+    "license": "GPL-2.0",
+    "authors": [
+        {
+            "name": "Roberto Segura",
+            "email": "roberto@phproberto.com",
+            "homepage": "http://www.phproberto.com"
+        }
+    ],
+    "require"    : {
+        "php": "^7.0",
+        "algolia/algoliasearch-client-php": "^1.25"
+    },
+    "autoload": {
+        "psr-4": {
+            "Phproberto\\Joomla\\Algolia\\": "src/"
+        }
+    }
+}

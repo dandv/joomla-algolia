@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit colors="true" bootstrap="tests/bootstrap.php">
+    <php>
+        <const name="JPATH_BASE" value="/var/www/joomla-cms" />
+    </php>
+    <testsuites>
+        <testsuite name="Joomla Algolia test suite">
+            <directory suffix="Test.php">./tests</directory>
+        </testsuite>
+    </testsuites>
+    <!--logging>
+        <log type="coverage-html"
+             target="./coverage"/>
+        <log type="coverage-clover"
+             target="./coverage/report-clover.xml"/>
+        <log type="junit"
+             target="./coverage/report-junit.xml"
+             logIncompleteSkipped="false"/>
+    </logging-->
+    <filter>
+        <whitelist>
+            <directory>./extensions</directory>
+        </whitelist>
+    </filter>
+</phpunit>

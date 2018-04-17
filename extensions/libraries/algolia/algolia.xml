@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="library" method="upgrade" version="3.6">
+	<name>LIB_ALGOLIA</name>
+	<libraryname>algolia</libraryname>
+	<creationDate>March 2018</creationDate>
+	<author>Roberto Segura</author>
+	<authorEmail>roberto@phproberto.com</authorEmail>
+	<authorUrl>www.phproberto.com</authorUrl>
+	<copyright>Copyright (C) 2018 Roberto Segura López. All rights reserved.</copyright>
+	<license>GNU General Public License version 2 or later, see LICENSE.</license>
+	<version>1.0.0</version>
+	<description>LIB_ALGOLIA_DESC</description>
+	<files>
+		<folder>cli</folder>
+		<folder>form</folder>
+		<folder>language</folder>
+		<folder>src</folder>
+		<folder>vendor</folder>
+		<filename>library.php</filename>
+	</files>
+</extension>
