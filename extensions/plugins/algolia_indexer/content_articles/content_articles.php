@@ -145,37 +145,14 @@ final class PlgAlgolia_IndexerContent_Articles extends BaseIndexerPlugin
 	}
 
 	/**
-	 * Retrieve active indexers.
+	 * Retrieve an instance of the associated indexer.
 	 *
-	 * @return  ContentArticleIndexer[]
+	 * @param   integer  $id  Indexer identifier
+	 *
+	 * @return  string
 	 */
-	private function indexers()
+	protected function indexerInstance(int $id)
 	{
-		$db = $this->db;
-
-		$query = $db->getQuery(true)
-			->select('i.*')
-			->from($db->qn('#__algolia_indexer', 'i'))
-			->innerjoin(
-				$db->qn('#__extensions', 'e')
-				. ' ON ' . $db->qn('e.extension_id') . ' = ' . $db->qn('i.extension_id')
-			)
-			->where('i.state = 1')
-			->where('e.enabled = 1');
-
-		$db->setQuery($query);
-
-		$indexersData = $db->loadAssocList() ?: [];
-		$indexers = [];
-
-		foreach ($indexersData as $indexerData)
-		{
-			$indexer = new ContentArticleIndexer($indexerData['id']);
-			$indexer->bind($indexerData);
-
-			$indexers[] = $indexer;
-		}
-
-		return $indexers;
+		return new ContentArticleIndexer($id);
 	}
 }

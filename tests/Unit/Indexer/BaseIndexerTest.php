@@ -326,9 +326,18 @@ class BaseIndexerTest extends \TestCase
 			]
 		];
 
-		$preparedData = [['test'], ['other']];
+		$preparedData = array_map(
+			function ($item)
+			{
+				return [
+					'objectID' => $item['id'],
+					'title'    => 'Prepared ' . $item['title']
+				];
+			},
+			$data
+		);
 
-		$indexer = $this->indexerMock(['loadItems', 'prepareItems']);
+		$indexer = $this->indexerMock(['loadItems', 'prepareItems', 'updateIndexerItem']);
 
 		$indexer->expects($this->at(0))
 			->method('loadItems')
@@ -339,6 +348,14 @@ class BaseIndexerTest extends \TestCase
 			->method('prepareItems')
 			->with($data)
 			->willReturn($preparedData);
+
+		$indexer->expects($this->at(2))
+			->method('updateIndexerItem')
+			->with($preparedData[0]['objectID'], BaseIndexer::STATE_INDEXED);
+
+		$indexer->expects($this->at(3))
+			->method('updateIndexerItem')
+			->with($preparedData[1]['objectID'], BaseIndexer::STATE_INDEXED);
 
 		$index = $this->indexMock(['saveObjects']);
 		$index->expects($this->once())
@@ -518,6 +535,106 @@ class BaseIndexerTest extends \TestCase
 			->willReturn($table);
 
 		$this->assertSame($dbData, $indexer->row());
+	}
+
+	/**
+	 * @test
+	 *
+	 * @return void
+	 */
+	public function updateIndexerItemUpdatesIndex()
+	{
+		$data = [
+			'indexer_id' => 23,
+			'object_id' => '22'
+		];
+
+		$table = $this->getMockBuilder(AlgoliaTableIndexer::class)
+			->disableOriginalConstructor()
+			->setMethods(['load', 'save'])
+			->getMock();
+
+		$table->expects($this->at(0))
+			->method('load')
+			->with($data)
+			->willReturn(false);
+
+		$data['state'] = BaseIndexer::STATE_REFRESH;
+
+		$table->expects($this->at(1))
+			->method('save')
+			->with($data)
+			->willReturn(true);
+
+		$indexer = $this->indexerMock(['table']);
+
+		$reflection = new \ReflectionClass($indexer);
+		$idProperty = $reflection->getProperty('id');
+		$idProperty->setAccessible(true);
+
+		$idProperty->setValue($indexer, 23);
+
+		$indexer->expects($this->once())
+			->method('table')
+			->willReturn($table);
+
+		$method = $reflection->getMethod('updateIndexerItem');
+		$method->setAccessible(true);
+
+		$method->invoke($indexer, '22', BaseIndexer::STATE_REFRESH);
+	}
+
+	/**
+	 * @test
+	 *
+	 * @return void
+	 *
+	 * @expectedException  \RuntimeException
+	 */
+	public function updateIndexerItemThrowsExceptionIfSaveFails()
+	{
+		$data = [
+			'indexer_id' => 23,
+			'object_id'  => '22'
+		];
+
+		$table = $this->getMockBuilder(AlgoliaTableIndexer::class)
+			->disableOriginalConstructor()
+			->setMethods(['load', 'save', 'getError'])
+			->getMock();
+
+		$table->expects($this->at(0))
+			->method('load')
+			->with($data)
+			->willReturn(false);
+
+		$table->expects($this->at(0))
+			->method('getError')
+			->willReturn('Something is broken!');
+
+		$data['state'] = BaseIndexer::STATE_REFRESH;
+
+		$table->expects($this->at(1))
+			->method('save')
+			->with($data)
+			->willReturn(false);
+
+		$indexer = $this->indexerMock(['table']);
+
+		$reflection = new \ReflectionClass($indexer);
+		$idProperty = $reflection->getProperty('id');
+		$idProperty->setAccessible(true);
+
+		$idProperty->setValue($indexer, 23);
+
+		$indexer->expects($this->once())
+			->method('table')
+			->willReturn($table);
+
+		$method = $reflection->getMethod('updateIndexerItem');
+		$method->setAccessible(true);
+
+		$method->invoke($indexer, '22', BaseIndexer::STATE_REFRESH);
 	}
 
 	/**

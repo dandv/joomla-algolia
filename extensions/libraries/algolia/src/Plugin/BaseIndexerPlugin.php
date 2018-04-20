@@ -12,6 +12,8 @@ namespace Phproberto\Joomla\Algolia\Plugin;
 defined('_JEXEC') || die;
 
 use Joomla\CMS\Form\Form;
+use Joomla\CMS\Table\Table;
+use Joomla\Utilities\ArrayHelper;
 use Phproberto\Joomla\Algolia\Plugin\BasePlugin;
 
 /**
@@ -21,6 +23,43 @@ use Phproberto\Joomla\Algolia\Plugin\BasePlugin;
  */
 abstract class BaseIndexerPlugin extends BasePlugin
 {
+	/**
+	 * [onAlgoliaIndexItems description]
+	 *
+	 * @param   array   $search      Search parameters
+	 * @param   array   $indexedIds  Count of already indexed items
+	 *
+	 * @return  void
+	 */
+	public function onAlgoliaIndexItems(array $search, array &$indexedIds)
+	{
+		// Specific indexer type searched
+		if (!empty($search['filter']['element']) && $search['filter']['element'] !== $this->_name)
+		{
+			return;
+		}
+
+		if (!empty($search['list']['limit']) && count($indexedIds) >= $search['list']['limit'])
+		{
+
+			return;
+		}
+
+		$indexerIds = empty($search['filter']['indexers']) ? [] : $search['filter']['indexers'];
+
+		foreach ($this->indexers($indexerIds) as $indexer)
+		{
+			$indexedIds = array_merge(
+				$indexedIds,
+				$indexer->searchAndIndexItems($search)
+			);
+
+			if (!empty($search['list']['limit']) && count($indexedIds) >= $search['list']['limit'])
+			{
+				return;
+			}
+		}
+	}
 	/**
 	 * When injecting plugin params.
 	 *
@@ -48,5 +87,59 @@ abstract class BaseIndexerPlugin extends BasePlugin
 		Form::addFormPath($formsFolder);
 
 		return $form->loadFile('params', true);
+	}
+
+	/**
+	 * Retrieve an instance of the associated indexer.
+	 *
+	 * @param   integer  $id  Indexer identifier
+	 *
+	 * @return  string
+	 */
+	abstract protected function indexerInstance(int $id);
+
+	/**
+	 * Retrieve active indexers.
+	 *
+	 * @return  ContentArticleIndexer[]
+	 */
+	protected function indexers(array $ids = [])
+	{
+		$ids = array_filter(ArrayHelper::toInteger($ids));
+
+		$db = $this->db;
+
+		$query = $db->getQuery(true)
+			->select('i.*')
+			->from($db->qn('#__algolia_indexer', 'i'))
+			->innerjoin(
+				$db->qn('#__extensions', 'e')
+				. ' ON ' . $db->qn('e.extension_id') . ' = ' . $db->qn('i.extension_id')
+			)
+			->where('i.state = 1')
+			->where('e.type = ' . $db->q('plugin'))
+			->where('e.folder = ' . $db->q($this->_type))
+			->where('e.element = ' . $db->q($this->_name))
+			->where('e.enabled = 1');
+
+		if ($ids)
+		{
+			$query->where($db->qn('i.id') . ' IN(' . implode(',', $ids) . ')');
+		}
+
+		$db->setQuery($query);
+
+		$indexersData = $db->loadAssocList() ?: [];
+		$indexers = [];
+
+		foreach ($indexersData as $indexerData)
+		{
+			$indexer = $this->indexerInstance($indexerData['id']);
+			$indexer->bind($indexerData);
+
+			$indexers[] = $indexer;
+		}
+
+		return $indexers;
 	}
 }

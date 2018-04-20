@@ -94,72 +94,6 @@ class ContentArticleIndexer extends BaseIndexer
 	}
 
 	/**
-	 * Load articles by their id.
-	 *
-	 * @param   array   $ids  Items identifiers
-	 *
-	 * @return  array
-	 */
-	protected function loadArticles(array $ids)
-	{
-		$categoriesIds = $this->categoriesIds();
-
-		if (!$categoriesIds && ($this->isIncludeCategoriesMode() || $this->isIncludeCategoriesWithDescendantsMode()))
-		{
-			return [];
-		}
-
-		$db = $this->db();
-
-		$query = $db->getQuery(true)
-			->select($db->qn('a.*'))
-			->select($db->qn('c.title', 'category_title'))
-			->select($db->qn('u.name', 'author_name'))
-			->from($db->qn('#__content', 'a'))
-			->innerjoin(
-				$db->qn('#__categories', 'c')
-				. ' ON ' . $db->qn('c.id') . ' = ' . $db->qn('a.catid')
-			)
-			->leftjoin(
-				$db->qn('#__users', 'u')
-				. ' ON ' . $db->qn('u.id') . ' = ' . $db->qn('a.created_by')
-			)
-
-			->where($db->qn('a.id') . ' IN(' . implode(',', $ids) . ')')
-			->order('a.ordering ASC');
-
-		if ($this->isIncludeCategoriesMode())
-		{
-			$query->where($db->qn('a.catid') . ' IN(' . implode(',', $categoriesIds) . ')');
-		}
-
-		if ($this->isIncludeCategoriesWithDescendantsMode())
-		{
-			$query->innerJoin(
-				$db->qn('#__categories', 'anc1') . ' ON ' . $db->qn('c.lft') . ' >= ' . $db->qn('anc1.lft') .
-					' AND ' . $db->qn('c.rgt') . ' <= ' . $db->qn('anc1.rgt')
-			)->where($db->qn('anc1.id') . ' IN(' . implode(',', $categoriesIds) . ')');
-		}
-
-		if ($categoriesIds && $this->isExcludeCategoriesMode())
-		{
-			$query->where($db->qn('a.catid') . ' NOT IN(' . implode(',', $categoriesIds) . ')');
-		}
-
-		if ($categoriesIds && $this->isExcludeCategoriesWithDescendantsMode())
-		{
-			$query->innerJoin(
-				$db->qn('#__categories', 'anc1') . ' ON ' . $db->qn('c.lft') . ' < ' . $db->qn('anc1.lft') .
-					' OR ' . $db->qn('c.rgt') . ' > ' . $db->qn('anc1.rgt')
-			)->where($db->qn('anc1.id') . ' IN(' . implode(',', $categoriesIds) . ')');
-		}
-
-		$db->setQuery($query);
-
-		return $db->loadAssocList('id') ?: [];
-	}
-
-	/**
 	 * Load fields for an array of articles.
 	 *
 	 * @param   array   $articles  Array of articles
@@ -275,31 +209,6 @@ class ContentArticleIndexer extends BaseIndexer
 	}
 
 	/**
-	 * Load items by their id.
-	 *
-	 * @param   array   $ids  Items identifiers
-	 *
-	 * @return  array
-	 */
-	protected function loadItems(array $ids)
-	{
-		$ids = array_values(array_filter(ArrayHelper::toInteger($ids)));
-
-		if (empty($ids))
-		{
-			return [];
-		}
-
-		$articles = $this->loadTags(
-			$this->loadFields(
-				$this->loadArticles($ids)
-			)
-		);
-
-		return $articles;
-	}
-
-	/**
 	 * Prepare an item to be index.
 	 *
 	 * @param   array   $item  Array containing item information.
@@ -326,24 +235,143 @@ class ContentArticleIndexer extends BaseIndexer
 			'_tags'          => []
 		];
 
-		foreach ($item['fields'] as $fieldId => $fieldValues)
+		if (isset($item['fields']))
 		{
-			foreach ($fieldValues as $fieldValue)
+			foreach ($item['fields'] as $fieldId => $fieldValues)
 			{
-				if (!isset($indexableObject[$fieldValue['name']]))
+				foreach ($fieldValues as $fieldValue)
 				{
-					$indexableObject[$fieldValue['name']] = [];
-				}
+					if (!isset($indexableObject[$fieldValue['name']]))
+					{
+						$indexableObject[$fieldValue['name']] = [];
+					}
 
-				$indexableObject[$fieldValue['name']][] = $fieldValue['value'];
+					$indexableObject[$fieldValue['name']][] = $fieldValue['value'];
+				}
 			}
 		}
 
-		foreach ($item['tags'] as $tag)
+		if (isset($item['tags']))
 		{
-			$indexableObject['_tags'][] = $tag['title'];
+			foreach ($item['tags'] as $tag)
+			{
+				$indexableObject['_tags'][] = $tag['title'];
+			}
 		}
 
 		return $indexableObject;
+	}
+
+	/**
+	 * Search indexable items.
+	 *
+	 * @param   array   $search  Array with filtering information
+	 *
+	 * @return  array
+	 */
+	public function searchItems(array $search)
+	{
+		$categoriesIds = $this->categoriesIds();
+
+		if (!$categoriesIds && ($this->isIncludeCategoriesMode() || $this->isIncludeCategoriesWithDescendantsMode()))
+		{
+			return [];
+		}
+
+		$db = $this->db();
+
+		$query = $db->getQuery(true)
+			->select($db->qn('a.*'))
+			->select($db->qn('c.title', 'category_title'))
+			->select($db->qn('u.name', 'author_name'))
+			->from($db->qn('#__content', 'a'))
+			->innerjoin(
+				$db->qn('#__categories', 'c')
+				. ' ON ' . $db->qn('c.id') . ' = ' . $db->qn('a.catid')
+			)
+			->leftjoin(
+				$db->qn('#__users', 'u')
+				. ' ON ' . $db->qn('u.id') . ' = ' . $db->qn('a.created_by')
+			)
+			->leftjoin(
+				$db->qn('#__algolia_indexer_item', 'ii')
+				. ' ON ' . $db->qn('ii.object_id') . ' = ' . $db->qn('a.id')
+			)
+			->order('a.ordering ASC');
+
+		if (!empty($search['filter']['ids']))
+		{
+			$ids = array_filter(ArrayHelper::toInteger($search['filter']['ids']));
+
+			$query->where($db->qn('a.id') . ' IN(' . implode(',', $ids) . ')');
+		}
+
+		if ($this->isIncludeCategoriesMode())
+		{
+			$query->where($db->qn('a.catid') . ' IN(' . implode(',', $categoriesIds) . ')');
+		}
+
+		if ($this->isIncludeCategoriesWithDescendantsMode())
+		{
+			$query->innerJoin(
+				$db->qn('#__categories', 'anc1') . ' ON ' . $db->qn('c.lft') . ' >= ' . $db->qn('anc1.lft') .
+					' AND ' . $db->qn('c.rgt') . ' <= ' . $db->qn('anc1.rgt')
+			)->where($db->qn('anc1.id') . ' IN(' . implode(',', $categoriesIds) . ')');
+		}
+
+		if ($categoriesIds && $this->isExcludeCategoriesMode())
+		{
+			$query->where($db->qn('a.catid') . ' NOT IN(' . implode(',', $categoriesIds) . ')');
+		}
+
+		if ($categoriesIds && $this->isExcludeCategoriesWithDescendantsMode())
+		{
+			$query->innerJoin(
+				$db->qn('#__categories', 'anc1') . ' ON ' . $db->qn('c.lft') . ' < ' . $db->qn('anc1.lft') .
+					' OR ' . $db->qn('c.rgt') . ' > ' . $db->qn('anc1.rgt')
+			)->where($db->qn('anc1.id') . ' IN(' . implode(',', $categoriesIds) . ')');
+		}
+
+		$indexDate = null;
+		$now = new \DateTime;
+
+		if (!empty($search['filter']['hours']))
+		{
+			$hours = (int) $search['filter']['hours'];
+			$indexDate = $now->modify('-' . $hours . ' hours');
+		}
+		elseif (!empty($search['filter']['days']))
+		{
+			$days = (int) $search['filter']['days'];
+
+			$indexDate = $now->modify('-' . $days . ' days');
+		}
+
+		if ($indexDate)
+		{
+			$query->where(
+				'('
+					. $db->qn('ii.modified_date') . ' IS NULL'
+					. ' OR ' . $db->qn('ii.modified_date') . ' < ' . $db->q($indexDate->format('Y-m-d H:i:s'))
+				. ')'
+			);
+		}
+
+		$limit = 0;
+
+		if (!empty($search['list']['limit']))
+		{
+			$limit = (int) $search['list']['limit'];
+		}
+
+		$db->setQuery($query, 0, $limit);
+
+		$items = $db->loadAssocList('id') ?: [];
+
+		return $this->loadTags(
+			$this->loadFields(
+				$items
+			)
+		);
 	}
 }

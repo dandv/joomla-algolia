@@ -11,7 +11,7 @@
 	<version>1.0.0</version>
 	<description>LIB_ALGOLIA_DESC</description>
 	<files>
-		<folder>cli</folder>
+		<folder>command</folder>
 		<folder>form</folder>
 		<folder>language</folder>
 		<folder>src</folder>

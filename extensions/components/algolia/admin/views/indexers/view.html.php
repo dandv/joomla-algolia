@@ -30,6 +30,11 @@ class AlgoliaViewIndexers extends HtmlView
 		AlgoliaHelper::addSubmenu('indexers');
 		$model = $this->getModel();
 
+		$this->items         = $model->getItems();
+		$this->pagination    = $model->getPagination();
+		$this->state         = $model->getState();
+		$this->filterForm    = $model->getFilterForm();
+		$this->activeFilters = $model->getActiveFilters();
 		$this->model = $model;
 
 		$this->addToolbar();
@@ -72,7 +77,7 @@ class AlgoliaViewIndexers extends HtmlView
 
 		if ($canDo->get('core.delete'))
 		{
-			JToolbarHelper::deleteList('JGLOBAL_CONFIRM_DELETE', 'indexers.delete', 'JTOOLBAR_DELETE');
+			JToolbarHelper::custom('indexers.delete', 'trash', '', 'JTOOLBAR_DELETE', true);
 		}
 
 		if ($user->authorise('core.admin', 'com_algolia'))

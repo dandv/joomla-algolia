@@ -28,13 +28,13 @@ class SampleIndexer extends BaseIndexer
 	public $loadableItems = [];
 
 	/**
-	 * Load items by their id.
+	 * Search indexable items.
 	 *
-	 * @param   array   $ids  Items identifiers
+	 * @param   array   $search  Array with filtering information
 	 *
 	 * @return  array
 	 */
-	protected function loadItems(array $ids)
+	public function searchItems(array $search)
 	{
 		return $this->loadableItems;
 	}

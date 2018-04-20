@@ -20,6 +20,13 @@ use Joomla\CMS\MVC\Model\ListModel;
 class AlgoliaModelIndexers extends ListModel
 {
 	/**
+	 * Name of the filter form to load
+	 *
+	 * @var  string
+	 */
+	protected $filterFormName = 'filter_indexers';
+
+	/**
 	 * Constructor.
 	 *
 	 * @param   array  $config  An optional associative array of configuration settings.
@@ -31,37 +38,19 @@ class AlgoliaModelIndexers extends ListModel
 			$config['filter_fields'] = array(
 				'indexer_id', 'i.indexer_id',
 				'item_id', 'i.iitem_id',
-				'name', 'i.item_name'
+				'name', 'i.name',
+				'state', 'i.state',
+				'index_name', 'i.index_name',
+				'extension_id',
+				'extension_name',
+				'i.created_date',
+				'application_id', 'i.application_id',
+				'i.modified_date',
+				'i.id'
 			);
 		}
 
 		parent::__construct($config);
-	}
-
-	/**
-	 * Method to get an array of data items.
-	 *
-	 * @return  mixed  An array of data items on success, false on failure.
-	 */
-	public function getItems()
-	{
-		$items = parent::getItems();
-
-		if (!$items)
-		{
-			return $items;
-		}
-
-		$lang  = Factory::getLanguage();
-
-		foreach ($items as $item)
-		{
-			$source    = JPATH_PLUGINS . '/' . $item->extension_folder . '/' . $item->extension_element;
-			$fileName = 'plg_' . $item->extension_folder . '_' . $item->extension_element;
-			$lang->load($fileName . '.sys', JPATH_ADMINISTRATOR, null, false, true) || $lang->load($fileName . '.sys', $source, null, false, true);
-		}
-
-		return $items;
 	}
 
 	/**
@@ -82,6 +71,53 @@ class AlgoliaModelIndexers extends ListModel
 				$db->qn('#__extensions', 'e')
 				. ' ON ' . $db->qn('e.extension_id') . ' = ' . $db->qn('i.extension_id')
 			);
+
+		// Search
+		if ($search = $this->state->get('filter.search'))
+		{
+			if (stripos($search, 'id:') === 0)
+			{
+				$query->where('i.id = ' . (int) substr($search, 3));
+			}
+			else
+			{
+				$search = $db->quote('%' . str_replace(' ', '%', $db->escape(trim($search), true) . '%'));
+				$query->where(
+					'('
+						. ' i.name LIKE ' . $search
+						. ' OR e.name LIKE ' . $search
+						. ' OR i.application_id LIKE ' . $search
+						. ' OR i.index_name LIKE ' . $search
+					. ')'
+				);
+			}
+		}
+
+		// State
+		$state = $this->getState('filter.state');
+
+		if (is_numeric($state))
+		{
+			$query->where('i.state = ' . (int) $state);
+		}
+
+		// Index name
+		if ($indexName = $this->getState('filter.index_name'))
+		{
+			$query->where('i.index_name = ' . $db->q($indexName));
+		}
+
+		// Extension
+		if ($extensionId = $this->getState('filter.extension_id'))
+		{
+			$query->where('i.extension_id = ' . $db->q($extensionId));
+		}
+
+		// ApplicationId
+		if ($applicationId = $this->getState('filter.application_id'))
+		{
+			$query->where('i.application_id = ' . $db->q($applicationId));
+		}
 
 		$orderCol = $this->state->get('list.ordering', 'i.name');
 		$orderDirn = $this->state->get('list.direction', 'asc');

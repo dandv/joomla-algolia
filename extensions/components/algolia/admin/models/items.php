@@ -29,8 +29,7 @@ class AlgoliaModelItems extends ListModel
 		{
 			$config['filter_fields'] = array(
 				'indexer_id', 'i.indexer_id',
-				'item_id', 'i.item_id',
-				'name', 'i.item_name'
+				'object_id', 'i.object_id'
 			);
 		}
 
@@ -48,13 +47,18 @@ class AlgoliaModelItems extends ListModel
 		$query = $db->getQuery(true)
 			->select('ii.*')
 			->select($db->qn('i.name', 'indexer_name'))
+			->select($db->qn('e.element', 'extension_element'))
 			->from($db->qn('#__algolia_indexer_item', 'ii'))
 			->innerjoin(
 				$db->qn('#__algolia_indexer', 'i')
 				. ' ON ' . $db->qn('i.id') . ' = ' . $db->qn('ii.indexer_id')
+			)
+			->innerjoin(
+				$db->qn('#__extensions', 'e')
+				. ' ON ' . $db->qn('i.extension_id') . ' = ' . $db->qn('e.extension_id')
 			);
 
-		$orderCol = $this->state->get('list.ordering', 'i.name');
+		$orderCol = $this->state->get('list.ordering', 'i.name, ii.object_id');
 		$orderDirn = $this->state->get('list.direction', 'asc');
 
 		$query->order($db->escape($orderCol) . ' ' . $db->escape($orderDirn));

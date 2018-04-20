@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fields name="filter">
+		<field
+			name="search"
+			type="text"
+			label="COM_ALGOLIA_FILTER_SEARCH"
+			hint="JSEARCH_FILTER"
+			class="form-control js-enter-submits"
+		/>
+		<field
+			name="extension_id"
+			type="algolia.plugin"
+			folder="algolia_indexer"
+			label="COM_ALGOLIA_INDEXER_FIELD_EXTENSION_ID"
+			description="COM_ALGOLIA_INDEXER_FIELD_EXTENSION_ID_DESC"
+			onchange="this.form.submit();"
+		>
+			<option value="">COM_ALGOLIA_INDEXER_FIELD_EXTENSION_ID_OPTION_SELECT</option>
+		</field>
+		<field
+			name="application_id"
+			type="algolia.application"
+			label="COM_ALGOLIA_FILTER_APPLICATION_ID"
+			description="COM_ALGOLIA_FILTER_APPLICATION_ID_DESC"
+			onchange="this.form.submit();"
+			>
+			<option value="">COM_ALGOLIA_FILTER_APPLICATION_ID_OPTION_SELECT</option>
+		</field>
+		<field
+			name="index_name"
+			type="algolia.index"
+			label="COM_ALGOLIA_FILTER_INDEX_NAME"
+			description="COM_ALGOLIA_FILTER_INDEX_NAME_DESC"
+			onchange="this.form.submit();"
+			>
+			<option value="">COM_ALGOLIA_FILTER_INDEX_NAME_OPTION_SELECT</option>
+		</field>
+		<field
+			name="state"
+			type="status"
+			filter="1,0"
+			label="COM_ALGOLIA_FILTER_STATE"
+			description="COM_ALGOLIA_FILTER_STATE_DESC"
+			onchange="this.form.submit();"
+			>
+			<option value="">JOPTION_SELECT_PUBLISHED</option>
+		</field>
+	</fields>
+	<fields name="list">
+		<field
+			name="fullordering"
+			type="list"
+			label="COM_CONTENT_LIST_FULL_ORDERING"
+			description="COM_CONTENT_LIST_FULL_ORDERING_DESC"
+			onchange="this.form.submit();"
+			default="i.name ASC"
+			>
+			<option value="">JGLOBAL_SORT_BY</option>
+			<option value="i.name ASC">JGLOBAL_TITLE_ASC</option>
+			<option value="i.name DESC">JGLOBAL_TITLE_DESC</option>
+			<option value="i.state ASC">JSTATUS_ASC</option>
+			<option value="i.state DESC">JSTATUS_DESC</option>
+			<option value="i.index_name ASC">COM_ALGOLIA_ORDER_INDEX_NAME_ASC</option>
+			<option value="i.index_name DESC">COM_ALGOLIA_ORDER_INDEX_NAME_DESC</option>
+			<option value="i.application_id ASC">COM_ALGOLIA_ORDER_APPLICATION_ID_ASC</option>
+			<option value="i.application_id DESC">COM_ALGOLIA_ORDER_APPLICATION_ID_DESC</option>
+			<option value="extension_name ASC">COM_ALGOLIA_ORDER_EXTENSION_NAME_ASC</option>
+			<option value="extension_name DESC">COM_ALGOLIA_ORDER_EXTENSION_NAME_DESC</option>
+			<option value="i.created_date ASC">JDATE_ASC</option>
+			<option value="i.created_date DESC">JDATE_DESC</option>
+			<option value="i.modified_date ASC">COM_ALGOLIA_ORDER_MODIFIED_DATE_ASC</option>
+			<option value="i.modified_date DESC">COM_ALGOLIA_ORDER_MODIFIED_DATE_DESC</option>
+			<option value="i.id ASC">JGRID_HEADING_ID_ASC</option>
+			<option value="i.id DESC">JGRID_HEADING_ID_DESC</option>
+		</field>
+
+		<field
+			name="limit"
+			type="limitbox"
+			label="COM_CONTENT_LIST_LIMIT"
+			description="COM_CONTENT_LIST_LIMIT_DESC"
+			class="input-mini"
+			default="25"
+			onchange="this.form.submit();"
+		/>
+	</fields>
+</form>

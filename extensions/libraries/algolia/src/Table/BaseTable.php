@@ -37,8 +37,7 @@ abstract class BaseTable extends Table
 	public function bind($src, $ignore = array())
 	{
 		// Autofill created_by and modified_by information
-		$now = Date::getInstance();
-		$nowFormatted = $now->toSql();
+		$now = new \DateTime;
 		$userId = Factory::getUser()->get('id');
 
 		if (property_exists($this, 'created_by')
@@ -51,7 +50,7 @@ abstract class BaseTable extends Table
 			&& (empty($src['created_date']) || $src['created_date'] === '0000-00-00 00:00:00')
 			&& (empty($this->created_date) || $this->created_date === '0000-00-00 00:00:00'))
 		{
-			$src['created_date'] = $nowFormatted;
+			$src['created_date'] = $now->format('Y-m-d H:i:s');
 		}
 
 		if (property_exists($this, 'modified_by') && empty($src['modified_by']))
@@ -62,7 +61,7 @@ abstract class BaseTable extends Table
 		if (property_exists($this, 'modified_date')
 			&& (empty($src['modified_date']) || $src['modified_date'] === '0000-00-00 00:00:00'))
 		{
-			$src['modified_date'] = $nowFormatted;
+			$src['modified_date'] = $now->format('Y-m-d H:i:s');
 		}
 
 		return parent::bind($src, $ignore);

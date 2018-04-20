@@ -15,9 +15,8 @@ use Joomla\CMS\Language\Text;
 $user      = Factory::getUser();
 $userId    = $user->get('id');
 
-$indexers   = $this->model->getItems();
-$pagination = $this->model->getPagination();
-$state      = $this->model->getState();
+$indexers   = $this->items;
+$state      = $this->state;
 
 $listOrder = $this->escape($state->get('list.ordering'));
 $listDirn  = $this->escape($state->get('list.direction'));
@@ -31,6 +30,10 @@ $listDirn  = $this->escape($state->get('list.direction'));
 	<?php else : ?>
 		<div id="j-main-container">
 	<?php endif; ?>
+		<?php
+		// Search tools bar
+		echo JLayoutHelper::render('joomla.searchtools.default', array('view' => $this));
+		?>
 		<?php if (empty($indexers)) : ?>
 			<div class="alert alert-no-items">
 				<?php echo Text::_('JGLOBAL_NO_MATCHING_RESULTS'); ?>
@@ -46,18 +49,20 @@ $listDirn  = $this->escape($state->get('list.direction'));
 							<?php echo JHtml::_('searchtools.sort', 'JSTATUS', 'i.state', $listDirn, $listOrder); ?>
 						</th>
 						<th style="min-width:100px" class="nowrap">
-							<?php echo JHtml::_('searchtools.sort', 'JGLOBAL_TITLE', 'a.title', $listDirn, $listOrder); ?>
+							<?php echo JHtml::_('searchtools.sort', 'JGLOBAL_TITLE', 'i.name', $listDirn, $listOrder); ?>
 						</th>
 						<th width="1%" class="nowrap">
-							<?php echo JHtml::_('searchtools.sort', 'COM_ALGOLIA_COL_EXTENSION', 'i.extension_name', $listDirn, $listOrder); ?>
+							<?php echo JHtml::_('searchtools.sort', 'COM_ALGOLIA_COL_PLUGIN', 'extension_name', $listDirn, $listOrder); ?>
 						</th>
 						<th width="1%" class="nowrap">
-							<?php echo JHtml::_('searchtools.sort', 'COM_ALGOLIA_COL_APPLICATION_ID', 'a.application_id', $listDirn, $listOrder); ?>
+							<?php echo JHtml::_('searchtools.sort', 'COM_ALGOLIA_COL_APPLICATION_ID', 'i.application_id', $listDirn, $listOrder); ?>
 						</th>
 						<th width="1%" class="nowrap">
-							<?php echo JHtml::_('searchtools.sort', 'COM_ALGOLIA_COL_INDEX_NAME', 'a.index_name', $listDirn, $listOrder); ?>
+							<?php echo JHtml::_('searchtools.sort', 'COM_ALGOLIA_COL_INDEX_NAME', 'i.index_name', $listDirn, $listOrder); ?>
 						</th>
-
+						<th width="1%" class="nowrap hidden-phone">
+							<?php echo JHtml::_('searchtools.sort', 'JGRID_HEADING_ID', 'i.id', $listDirn, $listOrder); ?>
+						</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -79,7 +84,7 @@ $listDirn  = $this->escape($state->get('list.direction'));
 									<?php // Create dropdown items and render the dropdown list.
 									if ($canChange)
 									{
-										JHtml::_('actionsdropdown.' . ((int) $item->state === -2 ? 'un' : '') . 'trash', 'cb' . $i, 'indexers');
+										JHtml::_('actionsdropdown.addCustomItem', Text::_('COM_ALGOLIA_BTN_DELETE'), 'trash', 'cb' . $i, 'indexers.delete');
 										echo JHtml::_('actionsdropdown.render', $this->escape($item->name));
 									}
 									?>
@@ -103,7 +108,7 @@ $listDirn  = $this->escape($state->get('list.direction'));
 								</div>
 							</td>
 							<td class="nowrap">
-								<?php echo $this->escape(Text::_($item->extension_name)); ?>
+								<?php echo $this->escape($item->extension_element); ?>
 							</td>
 							<td>
 								<?php echo $this->escape($item->application_id); ?>
@@ -111,12 +116,15 @@ $listDirn  = $this->escape($state->get('list.direction'));
 							<td>
 								<?php echo $this->escape($item->index_name); ?>
 							</td>
+							<td class="hidden-phone">
+								<?php echo (int) $item->id; ?>
+							</td>
 						</tr>
 					<?php endforeach; ?>
 				</tbody>
 			</table>
 		<?php endif; ?>
-		<?php echo $this->model->getPagination()->getListFooter(); ?>
+		<?php echo $this->pagination->getListFooter(); ?>
 
 		<input type="hidden" name="task" value="" />
 		<input type="hidden" name="boxchecked" value="0" />

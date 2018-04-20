@@ -28,6 +28,9 @@ use Phproberto\Joomla\Algolia\Indexer\AlgoliaIndexerConfig;
  */
 abstract class BaseIndexer
 {
+	const STATE_INDEXED = 1;
+	const STATE_REFRESH = 2;
+
 	/**
 	 * Algolia search client.
 	 *
@@ -226,11 +229,23 @@ abstract class BaseIndexer
 	{
 		$items = $this->loadItems($ids);
 
-		if ($items)
+		if (empty($items))
 		{
-			$this->index()->saveObjects($this->prepareItems($items));
+			return;
 		}
+
+		$preparedItems = $this->prepareItems($items);
+		$this->index()->saveObjects($preparedItems);
+
+		array_map(
+			function ($preparedItem)
+			{
+				$this->updateIndexerItem($preparedItem['objectID'], self::STATE_INDEXED);
+			},
+			$preparedItems
+		);
 	}
+
 
 	/**
 	 * Load items by their id.
@@ -239,7 +254,17 @@ abstract class BaseIndexer
 	 *
 	 * @return  array
 	 */
-	abstract protected function loadItems(array $ids);
+	protected function loadItems(array $ids)
+	{
+		$ids = array_values(array_filter(ArrayHelper::toInteger($ids)));
+
+		if (empty($ids))
+		{
+			return [];
+		}
+
+		return $this->searchItems(['filter' => ['ids' => $ids]]);
+	}
 
 	/**
 	 * Retrieve this indexer params.
@@ -303,14 +328,88 @@ abstract class BaseIndexer
 	}
 
 	/**
+	 * Search indexable items.
+	 *
+	 * @param   array   $search  Array with filtering information
+	 *
+	 * @return  array
+	 */
+	abstract public function searchItems(array $search);
+
+	/**
+	 * Searh items and index them.
+	 *
+	 * @param   array  $search  Array with filtering information
+	 *
+	 * @return   array
+	 */
+	public function searchAndIndexItems(array $search)
+	{
+		$items = $this->searchItems($search);
+
+		if (empty($items))
+		{
+			return [];
+		}
+
+		$preparedItems = $this->prepareItems($items);
+		$this->index()->saveObjects($preparedItems);
+
+		return array_map(
+			function ($preparedItem)
+			{
+				$this->updateIndexerItem($preparedItem['objectID'], self::STATE_INDEXED);
+
+				return $preparedItem['objectID'];
+			},
+			$preparedItems
+		);
+	}
+
+	/**
 	 * Load associated table.
+	 *
+	 * @param   string  $name    Table name
+	 * @param   string  $prefix  Table prefix
 	 *
 	 * @return  \AlgoliaTableIndexer
 	 *
 	 * @codeCoverageIgnore
 	 */
-	protected function table()
+	protected function table($name = 'Indexer', $prefix = 'AlgoliaTable')
 	{
-		return Table::getInstance('Indexer', 'AlgoliaTable');
+		Table::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_algolia/tables');
+
+		return Table::getInstance($name, $prefix);
+	}
+
+	/**
+	 * Update indexer item.
+	 *
+	 * @param   string   $objectId  Object identifier
+	 * @param   integer  $state     State to assign to the item
+	 *
+	 * @return  void
+	 *
+	 * @throws  \RuntimeException
+	 */
+	protected function updateIndexerItem(string $objectId, int $state)
+	{
+		$table = $this->table('Item');
+
+		$data = [
+			'indexer_id' => (int) $this->id,
+			'object_id'  => $objectId
+		];
+
+		// Try to load old item first
+		$table->load($data);
+
+		$data['state'] = $state;
+
+		if (!$table->save($data))
+		{
+			throw new \RuntimeException("Error saving indexed item " . $table->getError());
+		}
 	}
 }

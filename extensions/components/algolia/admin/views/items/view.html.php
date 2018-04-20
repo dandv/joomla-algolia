@@ -56,12 +56,12 @@ class AlgoliaViewItems extends HtmlView
 
 		if ($canDo->get('core.edit') || $canDo->get('core.edit.own'))
 		{
-			JToolbarHelper::editList('indexer.edit');
+			JToolbarHelper::editList('item.edit');
 		}
 
 		if ($canDo->get('core.delete'))
 		{
-			JToolbarHelper::deleteList('JGLOBAL_CONFIRM_DELETE', 'indexers.delete', 'JTOOLBAR_EMPTY_TRASH');
+			JToolbarHelper::deleteList('JGLOBAL_CONFIRM_DELETE', 'items.delete', 'JTOOLBAR_EMPTY_TRASH');
 		}
 
 		if ($user->authorise('core.admin', 'com_algolia'))
