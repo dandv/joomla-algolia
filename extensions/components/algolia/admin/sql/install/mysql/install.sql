@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS `#__algolia_indexer` (
   `created_date` DATETIME NULL,
   `modified_by` INT(10) NULL,
   `modified_date` DATETIME NULL,
-  `checked_out` INT(10) NULL,
+  `checked_out` INT(10) NULL DEFAULT 0,
   `checked_out_time` DATETIME NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_#__algolia_indexer_1_idx` (`extension_id` ASC),
@@ -35,18 +35,19 @@ CREATE TABLE IF NOT EXISTS `#__algolia_indexer` (
 -- Table `#__algolia_indexer_item`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `#__algolia_indexer_item` (
-  `indexer_id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `item_id` INT(11) NOT NULL,
-  `item_name` VARCHAR(255) NOT NULL,
+  `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `indexer_id` INT(11) UNSIGNED NOT NULL,
+  `object_id` VARCHAR(100) NOT NULL,
   `state` TINYINT(2) UNSIGNED NULL DEFAULT 1,
   `params` TEXT NULL,
   `created_by` INT(10) NULL,
   `created_date` DATETIME NULL,
   `modified_by` INT(10) NULL,
   `modified_date` DATETIME NULL,
-  `checked_out` INT(10) NULL,
+  `checked_out` INT(10) NULL DEFAULT 0,
   `checked_out_time` DATETIME NULL,
-  PRIMARY KEY (`indexer_id`, `item_id`),
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `index2` (`indexer_id` ASC, `object_id` ASC),
   CONSTRAINT `fk_#__algolia_indexer_item_1`
     FOREIGN KEY (`indexer_id`)
     REFERENCES `#__algolia_indexer` (`id`)
