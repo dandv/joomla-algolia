@@ -49,6 +49,18 @@ abstract class BaseCommand extends CliApplication
 	}
 
 	/**
+	 * Check the client interface by name.
+	 *
+	 * @param   string  $identifier  String identifier for the application interface
+	 *
+	 * @return  boolean  True if this application is of the given type client interface.
+	 */
+	public function isClient($identifier)
+	{
+		return false;
+	}
+
+	/**
 	 * Stub method for allow cache.
 	 *
 	 * @return  void

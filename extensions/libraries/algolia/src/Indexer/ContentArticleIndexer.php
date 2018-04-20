@@ -11,7 +11,9 @@ namespace Phproberto\Joomla\Algolia\Indexer;
 
 defined('_JEXEC') || die;
 
+use Joomla\CMS\Router\Route;
 use Joomla\Utilities\ArrayHelper;
+use Joomla\CMS\Application\CMSApplication;
 
 /**
  * Article indexer.
@@ -91,6 +93,27 @@ class ContentArticleIndexer extends BaseIndexer
 	protected function isExcludeCategoriesWithDescendantsMode()
 	{
 		return self::CATEGORY_MODE_EXCLUDE_DESCENDANTS === $this->params()->get('category_mode');
+	}
+
+	protected function articleUrl($id, $alias, $catid, $language)
+	{
+		\JLoader::register('ContentHelperRoute', JPATH_SITE . '/components/com_content/helpers/route.php');
+
+		$app = CMSApplication::getInstance('site');
+
+		$router  = $app->getRouter();
+		$rawUrl = \ContentHelperRoute::getArticleRoute($id . ':' . $alias, $catid, $language);
+		$baseUrl = $router->build('index.php')->toString();
+		$articleUrl = $router->build($rawUrl)->toString();
+
+		$lastChar = $baseUrl[strlen($baseUrl) - 1];
+
+		if ($lastChar !== '/')
+		{
+			return $rawUrl;
+		}
+
+		return '/' . str_replace($baseUrl, '', $articleUrl);
 	}
 
 	/**
@@ -232,7 +255,8 @@ class ContentArticleIndexer extends BaseIndexer
 			'created'        => strtotime($item['created']),
 			'author_name'    => $item['author_name'],
 			'modified'       => strtotime($item['modified']),
-			'_tags'          => []
+			'_tags'          => [],
+			'url'            => $this->articleUrl($item['id'], $item['alias'], $item['catid'], $item['language'])
 		];
 
 		if (isset($item['fields']))
