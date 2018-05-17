@@ -10,6 +10,7 @@
 defined('_JEXEC') || die;
 
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\Language\Text;
 use Joomla\Utilities\ArrayHelper;
 use Joomla\CMS\MVC\Controller\AdminController;
 
@@ -20,13 +21,6 @@ use Joomla\CMS\MVC\Controller\AdminController;
  */
 class AlgoliaControllerItems extends AdminController
 {
-	/**
-	 * Application object - Redeclared for proper typehinting
-	 *
-	 * @var   \JApplicationCms
-	 */
-	protected $app;
-
 	/**
 	 * Proxy for getModel.
 	 *
@@ -67,11 +61,13 @@ class AlgoliaControllerItems extends AdminController
 		}
 		catch (Exception $e)
 		{
-			$this->setMessage(JText::sprintf('LIB_ALGOLIA_ITEMS_ERROR_INDEX', $e->getMessage), 'error');
+			$msg = Text::sprintf('LIB_ALGOLIA_ITEMS_ERROR_INDEXING', $e->getMessage);
+			$this->setMessage($msg, 'error');
 
 			return false;
 		}
 
-		$this->setMessage(JText::_('LIB_ALGOLIA_ITEMS_MSG_INDEX_SUCCESS'), 'message');
+		$msg = Text::sprintf('LIB_ALGOLIA_ITEMS_MSG_N_ITEMS_INDEXED', count($ids));
+		$this->setMessage($msg, 'message');
 	}
 }
