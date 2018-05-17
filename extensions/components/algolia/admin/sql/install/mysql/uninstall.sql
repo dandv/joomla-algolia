@@ -1,6 +1,6 @@
 SET FOREIGN_KEY_CHECKS=0;
 
-DROP TABLE IF EXISTS `#__algolia_indexer`;
-DROP TABLE IF EXISTS `#__algolia_indexer_item`;
+DROP TABLE IF EXISTS `#__algolia_index`;
+DROP TABLE IF EXISTS `#__algolia_item`;
 
 SET FOREIGN_KEY_CHECKS=1;

@@ -13,6 +13,10 @@ use Joomla\CMS\Form\FormHelper;
 
 defined('JPATH_ALGOLIA_LIBRARY') || define('JPATH_ALGOLIA_LIBRARY', __DIR__);
 
+// Dependencies
+JLoader::import('twig.library');
+require_once JPATH_LIBRARIES . '/joomla_entity/library.php';
+
 $composerAutoload = __DIR__ . '/vendor/autoload.php';
 
 if (!file_exists($composerAutoload))

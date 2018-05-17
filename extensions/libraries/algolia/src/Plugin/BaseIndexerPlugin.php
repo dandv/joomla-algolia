@@ -14,7 +14,9 @@ defined('_JEXEC') || die;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Table\Table;
 use Joomla\Utilities\ArrayHelper;
+use Phproberto\Joomla\Algolia\Entity\Index;
 use Phproberto\Joomla\Algolia\Plugin\BasePlugin;
+use Phproberto\Joomla\Algolia\Indexer\IndexerInterface;
 
 /**
  * Base plugin.
@@ -23,6 +25,24 @@ use Phproberto\Joomla\Algolia\Plugin\BasePlugin;
  */
 abstract class BaseIndexerPlugin extends BasePlugin
 {
+	/**
+	 * Get the indexer associated to a plugin.
+	 *
+	 * @param   Index    $index        Associated index
+	 * @param   integer  $extensionId  Extension identifier
+	 *
+	 * @return  mixed
+	 */
+	public function onAlgoliaGetIndexer(Index $index, $extensionId)
+	{
+		if ($extensionId !== $this->extensionId())
+		{
+			return;
+		}
+
+		return $this->indexerInstance($index);
+	}
+
 	/**
 	 * [onAlgoliaIndexItems description]
 	 *
@@ -41,7 +61,6 @@ abstract class BaseIndexerPlugin extends BasePlugin
 
 		if (!empty($search['list']['limit']) && count($indexedIds) >= $search['list']['limit'])
 		{
-
 			return;
 		}
 
@@ -60,6 +79,7 @@ abstract class BaseIndexerPlugin extends BasePlugin
 			}
 		}
 	}
+
 	/**
 	 * When injecting plugin params.
 	 *
@@ -90,20 +110,22 @@ abstract class BaseIndexerPlugin extends BasePlugin
 	}
 
 	/**
-	 * Retrieve an instance of the associated indexer.
+	 * Get the associated indexer.
 	 *
-	 * @param   integer  $id  Indexer identifier
+	 * @param   Index  $index  Associated index
 	 *
-	 * @return  string
+	 * @return  IndexerInterface
 	 */
-	abstract protected function indexerInstance(int $id);
+	abstract protected function indexerInstance(Index $index);
 
 	/**
-	 * Retrieve active indexers.
+	 * Retrieve active indexes.
 	 *
-	 * @return  ContentArticleIndexer[]
+	 * @param   array  $ids  Return only specified indexers
+	 *
+	 * @return  ContentArticleIndex[]
 	 */
-	protected function indexers(array $ids = [])
+	protected function indexes(array $ids = [])
 	{
 		$ids = array_filter(ArrayHelper::toInteger($ids));
 
@@ -111,7 +133,7 @@ abstract class BaseIndexerPlugin extends BasePlugin
 
 		$query = $db->getQuery(true)
 			->select('i.*')
-			->from($db->qn('#__algolia_indexer', 'i'))
+			->from($db->qn('#__algolia_index', 'i'))
 			->innerjoin(
 				$db->qn('#__extensions', 'e')
 				. ' ON ' . $db->qn('e.extension_id') . ' = ' . $db->qn('i.extension_id')
@@ -129,17 +151,14 @@ abstract class BaseIndexerPlugin extends BasePlugin
 
 		$db->setQuery($query);
 
-		$indexersData = $db->loadAssocList() ?: [];
-		$indexers = [];
+		return array_map(
+			function ($indexerData)
+			{
+				$index = Index::find($indexerData['id'])->bind($indexerData);
 
-		foreach ($indexersData as $indexerData)
-		{
-			$indexer = $this->indexerInstance($indexerData['id']);
-			$indexer->bind($indexerData);
-
-			$indexers[] = $indexer;
-		}
-
-		return $indexers;
+				return $this->indexerInstance($index);
+			},
+			$db->loadAssocList() ?: []
+		);
 	}
 }

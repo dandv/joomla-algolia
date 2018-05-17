@@ -31,7 +31,12 @@ class AlgoliaViewItems extends HtmlView
 		AlgoliaHelper::addSubmenu('items');
 		$model = $this->getModel();
 
-		$this->model = $model;
+		$this->items         = $model->getItems();
+		$this->pagination    = $model->getPagination();
+		$this->state         = $model->getState();
+		$this->filterForm    = $model->getFilterForm();
+		$this->activeFilters = $model->getActiveFilters();
+		$this->model         = $model;
 
 		$this->addToolbar();
 		$this->sidebar = JHtmlSidebar::render();
@@ -54,14 +59,11 @@ class AlgoliaViewItems extends HtmlView
 
 		JToolbarHelper::title(Text::_('Algolia - Items'), 'stack article');
 
-		if ($canDo->get('core.edit') || $canDo->get('core.edit.own'))
-		{
-			JToolbarHelper::editList('item.edit');
-		}
+		JToolbarHelper::custom('items.reindex', 'arrow-down-4', '', 'Reindex', true);
 
 		if ($canDo->get('core.delete'))
 		{
-			JToolbarHelper::deleteList('JGLOBAL_CONFIRM_DELETE', 'items.delete', 'JTOOLBAR_EMPTY_TRASH');
+			JToolbarHelper::deleteList('JGLOBAL_CONFIRM_DELETE', 'items.delete', 'JTOOLBAR_DELETE');
 		}
 
 		if ($user->authorise('core.admin', 'com_algolia'))

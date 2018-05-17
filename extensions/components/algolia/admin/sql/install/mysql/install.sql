@@ -3,17 +3,18 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 
 
 -- -----------------------------------------------------
--- Table `#__algolia_indexer`
+-- Table `#__algolia_index`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `#__algolia_indexer` (
+CREATE TABLE IF NOT EXISTS `#__algolia_index` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NOT NULL,
   `extension_id` INT(11) NOT NULL,
   `application_id` VARCHAR(255) NOT NULL,
   `api_key` VARCHAR(255) NOT NULL,
   `search_key` VARCHAR(255) NOT NULL,
-  `index_name` VARCHAR(100) NOT NULL,
+  `index_name` VARCHAR(255) NOT NULL,
   `asset_id` INT(10) NOT NULL DEFAULT 0,
+  `last_execution` DATETIME NULL,
   `state` TINYINT(2) UNSIGNED NULL DEFAULT 1,
   `params` TEXT NULL,
   `created_by` INT(10) NULL,
@@ -23,8 +24,8 @@ CREATE TABLE IF NOT EXISTS `#__algolia_indexer` (
   `checked_out` INT(10) NULL DEFAULT 0,
   `checked_out_time` DATETIME NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_#__algolia_indexer_1_idx` (`extension_id` ASC),
-  CONSTRAINT `fk_#__algolia_indexer_1`
+  INDEX `fk_#__algolia_index_1_idx` (`extension_id` ASC),
+  CONSTRAINT `fk_#__algolia_index_1`
     FOREIGN KEY (`extension_id`)
     REFERENCES `#__extensions` (`extension_id`)
     ON DELETE CASCADE
@@ -32,12 +33,14 @@ CREATE TABLE IF NOT EXISTS `#__algolia_indexer` (
 
 
 -- -----------------------------------------------------
--- Table `#__algolia_indexer_item`
+-- Table `#__algolia_item`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `#__algolia_indexer_item` (
+CREATE TABLE IF NOT EXISTS `#__algolia_item` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `indexer_id` INT(11) UNSIGNED NOT NULL,
+  `index_id` INT(11) UNSIGNED NOT NULL,
   `object_id` VARCHAR(100) NOT NULL,
+  `name` VARCHAR(255) NOT NULL,
+  `data` MEDIUMTEXT NOT NULL,
   `state` TINYINT(2) UNSIGNED NULL DEFAULT 1,
   `params` TEXT NULL,
   `created_by` INT(10) NULL,
@@ -47,10 +50,10 @@ CREATE TABLE IF NOT EXISTS `#__algolia_indexer_item` (
   `checked_out` INT(10) NULL DEFAULT 0,
   `checked_out_time` DATETIME NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `index2` (`indexer_id` ASC, `object_id` ASC),
-  CONSTRAINT `fk_#__algolia_indexer_item_1`
-    FOREIGN KEY (`indexer_id`)
-    REFERENCES `#__algolia_indexer` (`id`)
+  UNIQUE INDEX `index2` (`index_id` ASC, `object_id` ASC),
+  CONSTRAINT `fk_#__algolia_item_1`
+    FOREIGN KEY (`index_id`)
+    REFERENCES `#__algolia_index` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE);
 

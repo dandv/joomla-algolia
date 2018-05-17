@@ -18,6 +18,15 @@
 		<language tag="en-GB">en-GB/en-GB.pkg_algolia.sys.ini</language>
 	</languages>
 
+	<dependencies>
+		<dependency type="package" name="twig" version="1.0.[3-9]" size="371739" hash="e2ed6015e5fb0d85ec1515769dd546b7" file="dependencies/joomla-twig-v1.0.3.zip">
+			Joomla Twig by phproberto
+		</dependency>
+		<dependency type="library" name="joomla_entity" version="1.0.[0-1]" size="89388" hash="b33792051314e80ef3833689746ecce8" file="dependencies/joomla-entity-v1.0.1.zip">
+			Joomla Entity by phproberto
+		</dependency>
+	</dependencies>
+
 	<files>
 		<file type="component" id="com_algolia" >components/algolia</file>
 		<file type="library" id="algolia">libraries/algolia</file>

@@ -28,9 +28,9 @@ class AlgoliaHelper extends JHelperContent
 	public static function addSubmenu($vName)
 	{
 		JHtmlSidebar::addEntry(
-			Text::_('Indexers'),
-			'index.php?option=com_algolia&view=indexers',
-			$vName == 'indexers'
+			Text::_('Indexes'),
+			'index.php?option=com_algolia&view=indexes',
+			$vName == 'indexes'
 		);
 
 		JHtmlSidebar::addEntry(

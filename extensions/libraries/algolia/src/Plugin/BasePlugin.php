@@ -89,6 +89,16 @@ abstract class BasePlugin extends CMSPlugin
 	}
 
 	/**
+	 * Retrieve this plugin extension id.
+	 *
+	 * @return  integer
+	 */
+	public function extensionId()
+	{
+		return (int) $this->extension()['extension_id'];
+	}
+
+	/**
 	 * Get the path to the folder of the current plugin.
 	 *
 	 * @return  string

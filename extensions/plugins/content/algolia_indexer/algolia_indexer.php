@@ -25,7 +25,7 @@ final class PlgContentAlgolia_Indexer extends BasePlugin
 	/**
 	 * Name of the indexer edit form.
 	 */
-	const INDEXER_FORM_NAME = 'com_algolia.indexer';
+	const INDEX_FORM_NAME = 'com_algolia.index';
 
 	/**
 	 * Constructor
@@ -41,22 +41,6 @@ final class PlgContentAlgolia_Indexer extends BasePlugin
 
 		// Make `content` events available for `algolia_indexer` plugins
 		PluginHelper::importPlugin('algolia_indexer');
-	}
-
-	/**
-	 * Runs on content preparation
-	 *
-	 * @param   string  $context  The context for the data
-	 * @param   object  $data     An object containing the data for the form.
-	 *
-	 * @return  boolean
-	 */
-	public function onContentPrepareData($context, $data)
-	{
-
-		return true;
-		echo '<pre>'; print_r($data); echo '</pre>';
-		die($context);
 	}
 
 	/**
@@ -78,7 +62,7 @@ final class PlgContentAlgolia_Indexer extends BasePlugin
 		$data = (array) $data;
 		$indexerId = empty($data['extension_id']) ? 0 : (int) $data['extension_id'];
 
-		if ($form->getName() !== static::INDEXER_FORM_NAME || !$indexerId)
+		if ($form->getName() !== static::INDEX_FORM_NAME || !$indexerId)
 		{
 			return true;
 		}

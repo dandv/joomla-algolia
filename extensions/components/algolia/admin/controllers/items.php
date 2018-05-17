@@ -9,6 +9,8 @@
 
 defined('_JEXEC') || die;
 
+use Joomla\CMS\Router\Route;
+use Joomla\Utilities\ArrayHelper;
 use Joomla\CMS\MVC\Controller\AdminController;
 
 /**
@@ -18,6 +20,13 @@ use Joomla\CMS\MVC\Controller\AdminController;
  */
 class AlgoliaControllerItems extends AdminController
 {
+	/**
+	 * Application object - Redeclared for proper typehinting
+	 *
+	 * @var   \JApplicationCms
+	 */
+	protected $app;
+
 	/**
 	 * Proxy for getModel.
 	 *
@@ -30,5 +39,39 @@ class AlgoliaControllerItems extends AdminController
 	public function getModel($name = 'Item', $prefix = 'AlgoliaModel', $config = array('ignore_request' => true))
 	{
 		return parent::getModel($name, $prefix, $config);
+	}
+
+	/**
+	 * Reindex items.
+	 *
+	 * @return  void
+	 */
+	public function reindex()
+	{
+		$ids = array_values(
+			array_filter(
+				ArrayHelper::toInteger((array) $this->input->get('cid', [], 'array')),
+				function ($value)
+				{
+					return $value > 0;
+				}
+			)
+		);
+
+		$url = 'index.php?option=' . $this->option . '&view=' . $this->{'view_list'};
+		$this->setRedirect(Route::_($url, false));
+
+		try
+		{
+			$this->getModel('Items')->reindex($ids);
+		}
+		catch (Exception $e)
+		{
+			$this->setMessage(JText::sprintf('LIB_ALGOLIA_ITEMS_ERROR_INDEX', $e->getMessage), 'error');
+
+			return false;
+		}
+
+		$this->setMessage(JText::_('LIB_ALGOLIA_ITEMS_MSG_INDEX_SUCCESS'), 'message');
 	}
 }

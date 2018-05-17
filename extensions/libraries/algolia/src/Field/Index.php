@@ -57,11 +57,11 @@ class Index extends \JFormFieldList
 	{
 		$db    = Factory::getDbo();
 		$query = $db->getQuery(true)
-			->select('DISTINCT ' . $db->qn('index_name', 'value'))
-			->select($db->qn('index_name', 'text'))
-			->from('#__algolia_indexer')
+			->select($db->qn('name', 'text'))
+			->select($db->qn('id', 'value'))
+			->from('#__algolia_index')
 			->where('state = 1')
-			->order('index_name, name');
+			->order('name, name');
 
 		return $db->setQuery($query)->loadObjectList() ?: [];
 	}

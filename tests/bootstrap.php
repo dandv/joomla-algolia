@@ -22,4 +22,4 @@ if (!defined('JPATH_ALGOLIA_EXTENSIONS'))
 $loader = new \Composer\Autoload\ClassLoader;
 
 require_once __DIR__ . '/../vendor/autoload.php';
-require_once __DIR__ . '/../extensions/libraries/algolia/vendor/autoload.php';
+require_once __DIR__ . '/../extensions/libraries/algolia/library.php';

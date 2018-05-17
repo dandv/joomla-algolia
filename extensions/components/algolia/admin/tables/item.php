@@ -39,7 +39,7 @@ class AlgoliaTableItem extends BaseTable
 	 *
 	 * @var  array
 	 */
-	protected $_tbl_keys = ['indexer_id', 'object_id'];
+	protected $_tbl_keys = ['index_id', 'object_id'];
 
 	/**
 	 * Constructor
@@ -48,6 +48,6 @@ class AlgoliaTableItem extends BaseTable
 	 */
 	public function __construct(\JDatabaseDriver $db)
 	{
-		parent::__construct('#__algolia_indexer_item', 'id', $db);
+		parent::__construct('#__algolia_item', 'id', $db);
 	}
 }

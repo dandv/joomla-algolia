@@ -35,7 +35,7 @@ class AlgoliaController extends BaseController
 		$app = Factory::getApplication();
 		$input = $app->input;
 
-		$input->set('view', $input->get('view', 'indexers'));
+		$input->set('view', $input->get('view', 'indexes'));
 		$input->set('task', $input->get('task', 'display'));
 
 		return parent::display($cachable, $urlparams);

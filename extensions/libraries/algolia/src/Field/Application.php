@@ -59,7 +59,7 @@ class Application extends \JFormFieldList
 		$query = $db->getQuery(true)
 			->select('DISTINCT ' . $db->qn('application_id', 'value'))
 			->select($db->qn('application_id', 'text'))
-			->from('#__algolia_indexer')
+			->from('#__algolia_index')
 			->where('state = 1')
 			->order('application_id, name');
 

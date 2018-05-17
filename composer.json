@@ -22,7 +22,7 @@
   },
   "autoload-dev": {
       "psr-4": {
-          "Phproberto\\Joomla\\Algolia\\Tests\\": "tests/"
+          "Phproberto\\Joomla\\Algolia\\Tests\\": "tests/tests"
       }
   },
   "require-dev": {

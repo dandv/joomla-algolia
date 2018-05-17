@@ -12,11 +12,11 @@ defined('_JEXEC') || die;
 JLoader::import('algolia.library');
 
 use Joomla\CMS\Factory;
-use AlgoliaSearch\Index;
 use AlgoliaSearch\Client;
+use Phproberto\Joomla\Algolia\Entity\Index;
+use Phproberto\Joomla\Algolia\Content\ArticlesIndexer;
 use Phproberto\Joomla\Algolia\Plugin\BaseIndexerPlugin;
 use Phproberto\Joomla\Algolia\Indexer\AlgoliaIndexerConfig;
-use Phproberto\Joomla\Algolia\Indexer\ContentArticleIndexer;
 
 /**
  * Article indexer.
@@ -54,9 +54,9 @@ final class PlgAlgolia_IndexerContent_Articles extends BaseIndexerPlugin
 			array_map(
 				function ($indexer) use ($article)
 				{
-					$indexer->deleteItem($article->id);
+					$indexer->delete([$article->id]);
 				},
-				$this->indexers()
+				$this->indexes()
 			);
 		}
 		catch (\Exception $e)
@@ -93,9 +93,9 @@ final class PlgAlgolia_IndexerContent_Articles extends BaseIndexerPlugin
 			array_map(
 				function ($indexer) use ($ids, $action)
 				{
-					$indexer->$action($ids);
+					$indexer->$action((array) $ids);
 				},
-				$this->indexers()
+				$this->indexes()
 			);
 		}
 		catch (\Exception $e)
@@ -127,12 +127,14 @@ final class PlgAlgolia_IndexerContent_Articles extends BaseIndexerPlugin
 
 		try
 		{
+			$action = 1 == $article->state ? 'indexItems' : 'deleteItems';
+
 			array_map(
-				function ($indexer) use ($article)
+				function ($indexer) use ($article, $action)
 				{
-					$indexer->indexItem($article->id);
+					$indexer->$action([$article->id]);
 				},
-				$this->indexers()
+				$this->indexes()
 			);
 		}
 		catch (\Exception $e)
@@ -145,14 +147,14 @@ final class PlgAlgolia_IndexerContent_Articles extends BaseIndexerPlugin
 	}
 
 	/**
-	 * Retrieve an instance of the associated indexer.
+	 * Get the associated indexer.
 	 *
-	 * @param   integer  $id  Indexer identifier
+	 * @param   Index  $index  Associated index
 	 *
-	 * @return  string
+	 * @return  IndexerInterface
 	 */
-	protected function indexerInstance(int $id)
+	protected function indexerInstance(Index $index)
 	{
-		return new ContentArticleIndexer($id);
+		return new ArticlesIndexer($index);
 	}
 }
