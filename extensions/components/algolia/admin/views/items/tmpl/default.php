@@ -47,10 +47,10 @@ $listDirn  = $this->escape($state->get('list.direction'));
 							<?php echo JHtml::_('grid.checkall'); ?>
 						</th>
 						<th style="min-width:100px"  class="nowrap">
-							<?php echo JHtml::_('searchtools.sort', 'COM_ALGOLIA_COL_NAME', 'i.name', $listDirn, $listOrder); ?>
+							<?php echo JHtml::_('searchtools.sort', 'COM_ALGOLIA_COL_NAME', 'item.name', $listDirn, $listOrder); ?>
 						</th>
 						<th width="1%" class="nowrap">
-							<?php echo JHtml::_('searchtools.sort', 'COM_ALGOLIA_COL_INDEX', 'i.index_name', $listDirn, $listOrder); ?>
+							<?php echo JHtml::_('searchtools.sort', 'COM_ALGOLIA_COL_INDEX', 'i.name', $listDirn, $listOrder); ?>
 						</th>
 						<th width="1%" class="nowrap">
 							<?php echo JHtml::_('searchtools.sort', 'COM_ALGOLIA_COL_PLUGIN', 'e.name', $listDirn, $listOrder); ?>

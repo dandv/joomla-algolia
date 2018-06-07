@@ -59,7 +59,7 @@ class AlgoliaViewItems extends HtmlView
 
 		JToolbarHelper::title(Text::_('Algolia - Items'), 'stack article');
 
-		JToolbarHelper::custom('items.reindex', 'arrow-down-4', '', 'Reindex', true);
+		JToolbarHelper::custom('items.reindex', 'arrow-down-4', '', 'LIB_ALGOLIA_BTN_INDEX', true);
 
 		if ($canDo->get('core.delete'))
 		{

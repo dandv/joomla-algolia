@@ -80,6 +80,8 @@ class AlgoliaViewIndexes extends HtmlView
 			JToolbarHelper::custom('indexes.delete', 'trash', '', 'JTOOLBAR_DELETE', true);
 		}
 
+		JToolbarHelper::custom('indexes.reindex', 'arrow-down-4', '', 'LIB_ALGOLIA_BTN_INDEX', true);
+
 		if ($user->authorise('core.admin', 'com_algolia'))
 		{
 			JToolbarHelper::preferences('com_algolia');

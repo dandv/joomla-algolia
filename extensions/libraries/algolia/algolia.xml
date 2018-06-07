@@ -14,6 +14,7 @@
 		<folder>command</folder>
 		<folder>form</folder>
 		<folder>language</folder>
+		<folder>layouts</folder>
 		<folder>src</folder>
 		<folder>vendor</folder>
 		<filename>library.php</filename>

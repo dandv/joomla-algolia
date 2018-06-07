@@ -30,7 +30,7 @@ class ArticlesFinder extends BaseFinder implements FinderInterface
 	 *
 	 * @return  IndexableArticle[]
 	 */
-	public function find(array $options)
+	public function find(array $options = [])
 	{
 		$categoriesIds = $this->config()->categoriesIds();
 
@@ -62,7 +62,7 @@ class ArticlesFinder extends BaseFinder implements FinderInterface
 
 		if (!empty($options['filter']['ids']))
 		{
-			$ids = array_filter(ArrayHelper::toInteger($options['filter']['ids']));
+			$ids = array_filter(ArrayHelper::toInteger((array) $options['filter']['ids']));
 
 			$query->where($db->qn('a.id') . ' IN(' . implode(',', $ids) . ')');
 		}
@@ -124,7 +124,7 @@ class ArticlesFinder extends BaseFinder implements FinderInterface
 		{
 			$limit = (int) $options['list']['limit'];
 		}
-echo $query->dump();
+
 		$db->setQuery($query, 0, $limit);
 
 		$items = $this->loadTags(
@@ -136,7 +136,7 @@ echo $query->dump();
 		return array_map(
 			function ($item)
 			{
-				return new IndexableArticle($item, $this->indexer);
+				return $this->indexer->indexableItem($item);
 			},
 			$items
 		);

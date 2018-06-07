@@ -66,11 +66,11 @@ abstract class BaseIndexerPlugin extends BasePlugin
 
 		$indexerIds = empty($search['filter']['indexers']) ? [] : $search['filter']['indexers'];
 
-		foreach ($this->indexers($indexerIds) as $indexer)
+		foreach ($this->indexes($indexerIds) as $indexer)
 		{
 			$indexedIds = array_merge(
 				$indexedIds,
-				$indexer->searchAndIndexItems($search)
+				$indexer->findAndIndexItems($search)
 			);
 
 			if (!empty($search['list']['limit']) && count($indexedIds) >= $search['list']['limit'])

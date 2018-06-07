@@ -10,6 +10,7 @@
 defined('_JEXEC') || die;
 
 use Joomla\CMS\Factory;
+use Phproberto\Joomla\Algolia\Entity\Index;
 use Phproberto\Joomla\Algolia\Model\ListModel;
 
 /**
@@ -72,6 +73,13 @@ class AlgoliaModelIndexes extends ListModel
 				. ' ON ' . $db->qn('e.extension_id') . ' = ' . $db->qn('i.extension_id')
 			);
 
+		$ids = $this->idsFromState('filter.id');
+
+		if ($ids)
+		{
+			$query->where($db->qn('i.id') . ' IN(' . implode(',', $ids) . ')');
+		}
+
 		// Search
 		if ($search = $this->state->get('filter.search'))
 		{
@@ -125,5 +133,35 @@ class AlgoliaModelIndexes extends ListModel
 		$query->order($db->escape($orderCol) . ' ' . $db->escape($orderDirn));
 
 		return $query;
+	}
+
+	/**
+	 * Reindex a list of items.
+	 *
+	 * @param   array  $ids  Items identifiers
+	 *
+	 * @return  array
+	 */
+	public function reindex($ids)
+	{
+		$itemsData = $this->search(
+			[
+				'filter.id' => $ids
+			]
+		);
+
+		$indexed = [];
+
+		foreach ($itemsData as $itemData)
+		{
+			$index = Index::find($itemData->id)->bind($itemData);
+
+			$indexer = $index->indexer();
+			$indexableItems = $indexer->finder()->find();
+
+			$indexed = array_merge($indexed, $indexer->indexItems($indexableItems));
+		}
+
+		return $indexed;
 	}
 }

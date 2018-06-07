@@ -57,7 +57,7 @@ class AlgoliaControllerItems extends AdminController
 
 		try
 		{
-			$this->getModel('Items')->reindex($ids);
+			$indexedIds = $this->getModel('Items')->reindex($ids);
 		}
 		catch (Exception $e)
 		{
@@ -67,7 +67,7 @@ class AlgoliaControllerItems extends AdminController
 			return false;
 		}
 
-		$msg = Text::sprintf('LIB_ALGOLIA_ITEMS_MSG_N_ITEMS_INDEXED', count($ids));
+		$msg = Text::sprintf('LIB_ALGOLIA_ITEMS_MSG_N_ITEMS_INDEXED', count($indexedIds));
 		$this->setMessage($msg, 'message');
 	}
 }

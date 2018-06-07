@@ -48,4 +48,16 @@ class ArticlesIndexer extends BaseIndexer implements IndexerInterface
 	{
 		return new ArticlesFinder($this);
 	}
+
+	/**
+	 * Get an instance of the associated indexable entity.
+	 *
+	 * @param   array   $data  Entity data
+	 *
+	 * @return  IndexableArticle
+	 */
+	public function indexableItem(array $data)
+	{
+		return new IndexableArticle($data, $this);
+	}
 }

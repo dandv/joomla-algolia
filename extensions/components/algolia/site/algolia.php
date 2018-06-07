@@ -12,6 +12,7 @@ defined('_JEXEC') || die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 
+JLoader::import('twig.library');
 JLoader::import('algolia.library');
 JLoader::registerPrefix('Algolia', __DIR__);
 

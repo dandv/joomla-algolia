@@ -43,6 +43,7 @@ class AlgoliaModelItems extends ListModel
 				'object_id', 'i.object_id',
 				'index',
 				'i.name',
+				'item.name',
 				'state'
 			);
 		}
@@ -119,7 +120,7 @@ class AlgoliaModelItems extends ListModel
 			}
 		}
 
-		$orderCol = $this->state->get('list.ordering', 'i.name, item.object_id');
+		$orderCol = $this->state->get('list.ordering', 'item.name, item.object_id');
 		$orderDirn = $this->state->get('list.direction', 'ASC');
 
 		$query->order($db->escape($orderCol) . ' ' . $db->escape($orderDirn));
@@ -132,7 +133,7 @@ class AlgoliaModelItems extends ListModel
 	 *
 	 * @param   array  $ids  Items identifiers
 	 *
-	 * @return  boolean
+	 * @return  array
 	 */
 	public function reindex($ids)
 	{
@@ -142,18 +143,21 @@ class AlgoliaModelItems extends ListModel
 			]
 		);
 
-		if (!$itemsData)
-		{
-			return true;
-		}
+		$indexed = [];
 
 		foreach ($itemsData as $itemData)
 		{
 			$item = Item::find($itemData->id)->bind($itemData);
+			$indexer = $item->index()->indexer();
+			$indexableItems = $indexer->finder()->find(
+				[
+					'filter' => ['ids' => $itemData->{'object_id'}]
+				]
+			);
 
-			$item->index()->indexer()->indexItems([$itemData->{'object_id'}]);
+			$indexed = array_merge($indexed, $indexer->indexItems($indexableItems));
 		}
 
-		return true;
+		return $indexed;
 	}
 }

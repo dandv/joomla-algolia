@@ -19,7 +19,7 @@
 	</languages>
 
 	<dependencies>
-		<dependency type="package" name="twig" version="1.0.[3-9]" size="371739" hash="e2ed6015e5fb0d85ec1515769dd546b7" file="dependencies/joomla-twig-v1.0.3.zip">
+		<dependency type="package" name="twig" version="1.0.[4-9]" upgradeableVersion="1.[0-9].[0-9]" size="375266" hash="a215dbdf11d37e624cd5cd7747380888" file="dependencies/joomla-twig-v1.1.0.zip">
 			Joomla Twig by phproberto
 		</dependency>
 		<dependency type="library" name="joomla_entity" version="1.0.[0-1]" size="89388" hash="b33792051314e80ef3833689746ecce8" file="dependencies/joomla-entity-v1.0.1.zip">
@@ -29,7 +29,11 @@
 
 	<files>
 		<file type="component" id="com_algolia" >components/algolia</file>
+		<!-- Library -->
 		<file type="library" id="algolia">libraries/algolia</file>
+		<!-- Modules -->
+		<file type="module" id="mod_algolia_autocomplete" client="site">modules/site/mod_algolia_autocomplete</file>
+		<!-- Plugins -->
 		<file type="plugin" id="content_articles" group="algolia_indexer" enabled="true">plugins/algolia_indexer/content_articles</file>
 		<file type="plugin" id="algolia_indexer" group="content" enabled="true">plugins/content/algolia_indexer</file>
 	</files>

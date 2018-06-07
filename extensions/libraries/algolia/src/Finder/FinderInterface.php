@@ -25,5 +25,5 @@ interface FinderInterface
 	 *
 	 * @return  array
 	 */
-	public function find(array $options);
+	public function find(array $options = []);
 }

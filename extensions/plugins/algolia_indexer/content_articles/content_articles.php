@@ -88,11 +88,18 @@ final class PlgAlgolia_IndexerContent_Articles extends BaseIndexerPlugin
 
 		try
 		{
-			$action = 1 === $state ? 'indexItems' : 'deleteItems';
+			$action = 1 === $state ? 'findAndIndexItems' : 'deleteItems';
 
 			array_map(
 				function ($indexer) use ($ids, $action)
 				{
+					if ($action === 'findAndIndexItems')
+					{
+						$indexer->$action(['filters' => ['ids' => $ids]]);
+
+						return;
+					}
+
 					$indexer->$action((array) $ids);
 				},
 				$this->indexes()
@@ -127,11 +134,18 @@ final class PlgAlgolia_IndexerContent_Articles extends BaseIndexerPlugin
 
 		try
 		{
-			$action = 1 == $article->state ? 'indexItems' : 'deleteItems';
+			$action = 1 == $article->state ? 'findAndIndexItems' : 'deleteItems';
 
 			array_map(
 				function ($indexer) use ($article, $action)
 				{
+					if ($action === 'findAndIndexItems')
+					{
+						$indexer->$action(['filters' => ['ids' => [$article->id]]]);
+
+						return;
+					}
+
 					$indexer->$action([$article->id]);
 				},
 				$this->indexes()

@@ -52,16 +52,6 @@ abstract class BaseIndexer
 	}
 
 	/**
-	 * Get associated index.
-	 *
-	 * @return  Index
-	 */
-	public function index()
-	{
-		return $this->index;
-	}
-
-	/**
 	 * Delete items from the algolia index.
 	 *
 	 * @param   array   $ids  Array of items to delete
@@ -74,6 +64,30 @@ abstract class BaseIndexer
 	}
 
 	/**
+	 * Searh items and index them.
+	 *
+	 * @param   array  $search  Array with filtering information
+	 *
+	 * @return   array
+	 */
+	public function findAndIndexItems(array $search)
+	{
+		return $this->indexItems($this->findItems($search));
+	}
+
+	/**
+	 * Search indexable items.
+	 *
+	 * @param   array   $options  Array with search filders.
+	 *
+	 * @return  array
+	 */
+	public function findItems(array $options = [])
+	{
+		return $this->finder()->find($options);
+	}
+
+	/**
 	 * Indexable items finder.
 	 *
 	 * @return  FinderInterface
@@ -81,26 +95,53 @@ abstract class BaseIndexer
 	abstract public function finder();
 
 	/**
-	 * Index a list of items by their id.
+	 * Get associated index.
 	 *
-	 * @param   integer[]   $ids  Items identifiers.
-	 *
-	 * @return  void
+	 * @return  Index
 	 */
-	public function indexItems(array $ids)
+	public function index()
 	{
-		$indexableItems = $this->finder()->find(
-			[
-				'filter' => ['ids' => $ids]
-			]
-		);
+		return $this->index;
+	}
 
+	/**
+	 * Get an instance of the associated indexable entity.
+	 *
+	 * @param   array   $data  Entity data
+	 *
+	 * @return  IndexableItem
+	 */
+	public function indexableItem(array $data)
+	{
+		return new IndexableItem($data, $this);
+	}
+
+	/**
+	 * Index an indexable item.
+	 *
+	 * @param   IndexableItem  $indexableItem  Indexable item.
+	 *
+	 * @return  string
+	 */
+	public function indexItem(IndexableItem $indexableItem)
+	{
+		return $this->indexItems([$indexableItem])[0];
+	}
+
+	/**
+	 * Index an array of indexable items.
+	 *
+	 * @param   IndexableItem[]  $indexableItems  Indexable items.
+	 *
+	 * @return  array
+	 */
+	public function indexItems(array $indexableItems)
+	{
 		if (empty($indexableItems))
 		{
-			return;
+			return [];
 		}
 
-		// Index items
 		$this->index()->algoliaIndex()->saveObjects(
 			array_map(
 				function ($indexableItem)
@@ -111,83 +152,14 @@ abstract class BaseIndexer
 			)
 		);
 
-		// Update saved items
-		array_map(
-			function ($indexableItem)
-			{
-				$indexableItem->save(['state' => IndexableItem::STATE_INDEXED]);
-
-			},
-			$indexableItems
-		);
-	}
-
-	/**
-	 * Searh items and index them.
-	 *
-	 * @param   array  $search  Array with filtering information
-	 *
-	 * @return   array
-	 */
-	public function searchAndIndexItems(array $search)
-	{
-		$indexableItems = $this->finder()->find($search);
-
-		if (empty($indexableItems))
-		{
-			return [];
-		}
-
-		// Index items
-		$this->algoliaIndex()->saveObjects(
-			array_map(
-				function ($indexableItem)
-				{
-					return $indexableItem->indexableData();
-				},
-				$indexableItems
-			)
-		);
-
-		// Update saved items
 		return array_map(
 			function ($indexableItem)
 			{
 				$indexableItem->save(['state' => IndexableItem::STATE_INDEXED]);
 
-				return $indexableItem->indexableData()['objectID'];
+				return $indexableItem->objectId();
 			},
 			$indexableItems
 		);
-	}
-
-	/**
-	 * Update indexer item.
-	 *
-	 * @param   string   $objectId  Object identifier
-	 * @param   integer  $state     State to assign to the item
-	 *
-	 * @return  void
-	 *
-	 * @throws  \RuntimeException
-	 */
-	protected function updateIndexerItem(string $objectId, int $state)
-	{
-		$table = $this->table('Item');
-
-		$data = [
-			'index_id'  => $this->index()->id(),
-			'object_id' => $objectId
-		];
-
-		// Try to load old item first
-		$table->load($data);
-
-		$data['state'] = $state;
-
-		if (!$table->save($data))
-		{
-			throw new \RuntimeException("Error saving indexed item " . $table->getError());
-		}
 	}
 }

@@ -1,6 +1,11 @@
 {
 	"components": ["algolia"],
 	"libraries"  : ["algolia"],
+	"modules" : {
+		"frontend" : [
+			"autocomplete"
+		]
+	},
 	"packages"   : ["algolia"],
 	"plugins" : {
 		"algolia_indexer" : ["content_articles"],

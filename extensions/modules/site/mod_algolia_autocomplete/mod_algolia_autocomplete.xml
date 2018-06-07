@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="module" version="3.2" client="site" method="upgrade">
+	<name>MOD_ALGOLIA_AUTOCOMPLETE</name>
+	<version>1.0.0</version>
+	<creationDate>June 2018</creationDate>
+	<author>Roberto Segura</author>
+	<authorEmail>roberto@phproberto.com</authorEmail>
+	<authorUrl>www.phproberto.com</authorUrl>
+	<copyright>Copyright (C) 2018 Roberto Segura López. All rights reserved.</copyright>
+	<license>GNU General Public License version 2 or later, see LICENSE.</license>
+	<description>MOD_ALGOLIA_AUTOCOMPLETE_XML_DESC</description>
+	<files>
+		<folder>language</folder>
+		<folder>tmpl</folder>
+		<filename module="mod_algolia_autocomplete">mod_algolia_autocomplete.php</filename>
+		<filename>mod_algolia_autocomplete.xml</filename>
+	</files>
+	<media folder="media">
+		<folder>mod_algolia_autocomplete</folder>
+	</media>
+	<config>
+		<fields name="params" addfieldpath="/libraries/algolia/form/field">
+			<fieldset name="basic">
+				<field 
+					name="index_id" 
+					type="algolia.index"
+					label="LIB_ALGOLIA_FIELD_INDEX_ID"
+					description="LIB_ALGOLIA_FIELD_INDEX_ID_DESC"
+					required="true"
+				/>
+			</fieldset>
+			<fieldset name="advanced">
+				<field
+					name="layout"
+					type="modulelayout"
+					label="JFIELD_ALT_LAYOUT_LABEL"
+					description="JFIELD_ALT_MODULE_LAYOUT_DESC"
+				/>
+			</fieldset>
+		</fields>
+	</config>
+</extension>
