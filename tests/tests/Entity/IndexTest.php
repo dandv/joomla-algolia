@@ -133,6 +133,21 @@ class IndexTest extends \TestCaseDatabase
 	 */
 	public function deleteItemsRemovesItems()
 	{
+		$algoliaIndex = $this->getMockBuilder(Index::class)
+			->disableOriginalConstructor()
+			->setMethods(['deleteObjects'])
+			->getMock();
+
+		$algoliaIndex->expects($this->once())
+			->method('deleteObjects')
+			->with($this->equalTo([1,2]));
+
+		$reflection = new \ReflectionClass($this->index);
+		$algoliaIndexProperty = $reflection->getProperty('algoliaIndex');
+		$algoliaIndexProperty->setAccessible(true);
+
+		$algoliaIndexProperty->setValue($this->index, $algoliaIndex);
+
 		$this->assertTrue($this->index->items()->count() > 0);
 
 		$this->index->deleteItems();

@@ -193,25 +193,15 @@ class Index extends BaseEntity
 	{
 		if (null === $this->items)
 		{
-			$this->items = $this->loadItems();
+			$this->items = $this->searchItems(
+				[
+					'list.limit' => 0,
+					'list.start' => 0
+				]
+			);
 		}
 
 		return $this->items;
-	}
-
-	/**
-	 * Load items from database.
-	 *
-	 * @return  Collection
-	 */
-	protected function loadItems()
-	{
-		return $this->searchItems(
-			[
-				'list.limit' => 0,
-				'list.start' => 0
-			]
-		);
 	}
 
 	/**
@@ -238,19 +228,21 @@ class Index extends BaseEntity
 			$modelState
 		);
 
-		$modelState['filter.indexer'] = $this->id();
+		$modelState['filter.index'] = $this->id();
 
 		$model = $this->component()->model('items');
-
 		$itemsData = $model->search($modelState);
 
-		foreach ($itemsData as $itemData)
-		{
-			$item = new Item;
-			$item->bind($itemData);
+		array_map(
+			function ($itemData) use ($items)
+			{
+				$item = new Item;
+				$item->bind($itemData);
 
-			$items->add($item);
-		}
+				$items->add($item);
+			},
+			$model->search($modelState)
+		);
 
 		return $items;
 	}

@@ -69,7 +69,7 @@ $config = $index->algoliaConfig();
 			    clearAll: 'after',
 			    clearsQuery: true,
 			    templates: {
-			    	header: '<span class="uk-text-muted">Filtros activos: </span>',
+			    	header: '<span>Filtros activos: </span>',
 			    	item: (selection) => {
 			    		if (selection.type === 'query') {
 			    			return selection.name;
@@ -95,7 +95,51 @@ $config = $index->algoliaConfig();
 			    limit: 10,
 			    showMore: true,
 			    templates: {
-			      header: '<h3 class="uk-panel-title">Categories</h3>',
+			      header: '<h3>Categories</h3>',
+			      item: function(object) {
+			      	const label = object.label;
+			      	return '<label class="ais-refinement-list--label">'
+					  		+ '<input class="ais-refinement-list--checkbox" value="' + object.value + '" type="checkbox" ' + (object.isRefined ? 'checked' : '') + '>'
+					      	+ ' ' + label
+					  		+ '<span class="ais-refinement-list--count"> (' + object.count + ')</span>'
+							+ '</label>';
+			      }
+			    }
+			  })
+			);
+
+			search.addWidget(
+			  instantsearch.widgets.refinementList({
+			    container: '#algolia-anos',
+			    attributeName: 'ano',
+			    operator: 'or',
+			    sortBy: ["name:asc","count:desc"],
+			    limit: 10,
+			    showMore: true,
+			    templates: {
+			      header: '<h3>Año</h3>',
+			      item: function(object) {
+			      	const label = object.label;
+			      	return '<label class="ais-refinement-list--label">'
+					  		+ '<input class="ais-refinement-list--checkbox" value="' + object.value + '" type="checkbox" ' + (object.isRefined ? 'checked' : '') + '>'
+					      	+ ' ' + label
+					  		+ '<span class="ais-refinement-list--count"> (' + object.count + ')</span>'
+							+ '</label>';
+			      }
+			    }
+			  })
+			);
+
+			search.addWidget(
+			  instantsearch.widgets.refinementList({
+			    container: '#algolia-circuitos',
+			    attributeName: 'circuitos',
+			    operator: 'or',
+			    sortBy: ["name:asc","count:desc"],
+			    limit: 10,
+			    showMore: true,
+			    templates: {
+			      header: '<h3 class="uk-panel-title">Tags</h3>',
 			      item: function(object) {
 			      	const label = object.label;
 			      	return '<label class="ais-refinement-list--label">'
