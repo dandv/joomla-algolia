@@ -124,7 +124,7 @@ Factory::getDocument()->addStyleDeclaration("
 							title = suggestion._highlightResult.title.value;
 						}
 
-						return '<a href="<?=Uri::root(true)?>/' + suggestion.url + '"><span>' + title + '</span></a>';
+						return '<a href="<?=Uri::root()?>/' + suggestion.url + '"><span>' + title + '</span></a>';
 					}
 			}
 	});
