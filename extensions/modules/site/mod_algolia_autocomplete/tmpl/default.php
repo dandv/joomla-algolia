@@ -96,7 +96,7 @@ Factory::getDocument()->addStyleDeclaration("
 ?>
 <div id="mod-algolia-autocomplete-<?=$module->id?>" class="mod-algolia-autocomplete">
 	<form class="uk-form" action="formacion">
-			<input id="str-search-input" name="buscar" class="uk-form-width-large" type="text" placeholder="<?php echo JText::_('MOD_ALGOLIA_AUTOCOMPLETE_PLACEHOLDER'); ?>">
+			<input id="mod-algolia-search-input" name="buscar" class="uk-form-width-large" type="text" placeholder="<?php echo JText::_('MOD_ALGOLIA_AUTOCOMPLETE_PLACEHOLDER'); ?>">
 			<button type="submit" class="btn btn-primary"><?php echo JText::_('MOD_ALGOLIA_AUTOCOMPLETE_BUTTON'); ?></button>
 	</form>
 
@@ -109,7 +109,7 @@ Factory::getDocument()->addStyleDeclaration("
 	var index = client.initIndex('<?=$config->indexName()?>');
 
 	//initialize autocomplete on search input (ID selector must match)
-	autocomplete('#str-search-input',
+	autocomplete('#mod-algolia-search-input',
 	{ hint: false }, {
 			source: autocomplete.sources.hits(index, {hitsPerPage: 5}),
 			//value to be displayed in input control after user's suggestion selection
