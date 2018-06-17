@@ -96,8 +96,8 @@ Factory::getDocument()->addStyleDeclaration("
 ?>
 <div id="mod-algolia-autocomplete-<?=$module->id?>" class="mod-algolia-autocomplete">
 	<form class="uk-form" action="formacion">
-			<input id="str-search-input" name="buscar" class="uk-form-width-large" type="text" placeholder="Encuentra tu curso">
-			<button type="submit" class="btn btn-primary">Buscar</button>
+			<input id="str-search-input" name="buscar" class="uk-form-width-large" type="text" placeholder="<?php echo JText::_('MOD_ALGOLIA_AUTOCOMPLETE_PLACEHOLDER'); ?>">
+			<button type="submit" class="btn btn-primary"><?php echo JText::_('MOD_ALGOLIA_AUTOCOMPLETE_BUTTON'); ?></button>
 	</form>
 
 	<!-- Include AlgoliaSearch JS Client and autocomplete.js library -->
