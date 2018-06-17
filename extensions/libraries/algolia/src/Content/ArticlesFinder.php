@@ -42,7 +42,7 @@ class ArticlesFinder extends BaseFinder implements FinderInterface
 		$db = $this->db();
 
 		$query = $db->getQuery(true)
-			->select($db->qn('a.*'))
+			->select('a.*')
 			->select($db->qn('c.title', 'category_title'))
 			->select($db->qn('u.name', 'author_name'))
 			->from($db->qn('#__content', 'a'))
@@ -162,7 +162,7 @@ class ArticlesFinder extends BaseFinder implements FinderInterface
 
 		$query = $db->getQuery(true)
 			->select($db->qn('fv.item_id', 'article_id'))
-			->select($db->qn('f.*'))
+			->select('f.*')
 			->select($db->qn('fv.value'))
 			->from($db->qn('#__fields', 'f'))
 			->innerjoin(
@@ -222,7 +222,7 @@ class ArticlesFinder extends BaseFinder implements FinderInterface
 
 		$query = $db->getQuery(true)
 			->select($db->qn('ctm.content_item_id', 'article_id'))
-			->select($db->qn('t.*'))
+			->select('t.*')
 			->from($db->qn('#__tags', 't'))
 			->innerjoin(
 				$db->qn('#__contentitem_tag_map', 'ctm')
